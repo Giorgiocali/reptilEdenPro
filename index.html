@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0c0c0e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ReptilEden">
+<link rel="manifest" href="manifest.json">
+<title>ReptilEden</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0c0c0e; --card:#16161a; --card2:#1c1c22; --card3:#222228;
+  --gold:#c9a84c; --gold2:#e8c96a; --gold3:#f0dfa0;
+  --cream:#f2ede4; --muted:#6b6b7a; --muted2:#44444f;
+  --danger:#e05555; --warn:#d4892a; --ok:#3fa06e; --text:#ede9e0;
+  --border:rgba(201,168,76,0.12); --border2:rgba(255,255,255,0.06);
+  --r:20px; --r2:14px; --r3:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:400;min-height:100dvh;overflow-x:hidden;}
+.app{max-width:430px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;}
+
+/* HEADER */
+.header{padding:54px 16px 14px;background:linear-gradient(180deg,#0c0c0e 0%,rgba(12,12,14,0.95) 100%);backdrop-filter:blur(20px);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border2);}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.wordmark{font-family:'DM Serif Display',serif;font-size:24px;color:var(--cream);letter-spacing:-0.3px;line-height:1;}
+.wordmark span{color:var(--gold2);font-style:italic;}
+.header-actions{display:flex;gap:8px;}
+.icon-btn{width:36px;height:36px;border:1px solid var(--border);background:var(--card2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all 0.2s;flex-shrink:0;}
+.icon-btn:active{transform:scale(0.88);}
+.icon-btn.active{border-color:var(--gold);background:rgba(201,168,76,0.1);}
+
+/* REPTILE SELECTOR */
+.reptile-selector{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.reptile-selector::-webkit-scrollbar{display:none;}
+.rep-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--card2);cursor:pointer;white-space:nowrap;transition:all 0.2s;font-size:13px;color:var(--muted);}
+.rep-chip.active{border-color:var(--gold);background:rgba(201,168,76,0.1);color:var(--gold2);}
+.rep-chip .rep-icon{font-size:16px;}
+.rep-chip-add{border-style:dashed;color:var(--muted2);}
+.rep-chip-add:active{background:var(--card3);}
+
+/* NAV */
+.nav-bar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:398px;background:rgba(22,22,26,0.92);backdrop-filter:blur(24px);border:1px solid var(--border2);border-radius:28px;display:flex;padding:6px;gap:4px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.5);}
+.nav-btn{flex:1;padding:9px 4px 7px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:0.3px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:22px;transition:all 0.2s;text-transform:uppercase;}
+.nav-btn .ico{font-size:18px;line-height:1;}
+.nav-btn.active{background:var(--card3);color:var(--gold2);}
+.nav-btn:active{opacity:0.6;}
+
+/* CONTENT */
+.content{flex:1;padding:16px 16px 96px;overflow-y:auto;}
+.page{display:none;animation:fadeUp 0.28s cubic-bezier(.4,0,.2,1);}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:12px;position:relative;overflow:hidden;}
+.card-label{font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.card-label::before{content:'';width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;}
+.section-head{font-family:'DM Serif Display',serif;font-size:22px;color:var(--cream);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+
+/* HERO */
+.hero-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:12px;position:relative;overflow:hidden;}
+.hero-card::after{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.09) 0%,transparent 70%);pointer-events:none;}
+.hero-avatar{width:68px;height:68px;border-radius:50%;object-fit:cover;border:2px solid var(--border);margin-bottom:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:36px;}
+.hero-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+.hero-name{font-family:'DM Serif Display',serif;font-size:28px;color:var(--cream);line-height:1.1;}
+.hero-species{font-size:12px;color:var(--muted);margin-top:4px;letter-spacing:0.5px;}
+.hero-divider{height:1px;background:var(--border2);margin:16px 0;}
+.hero-stats{display:flex;}
+.hero-stat{flex:1;text-align:center;}
+.hero-stat+.hero-stat{border-left:1px solid var(--border2);}
+.hero-stat-val{font-family:'DM Serif Display',serif;font-size:22px;color:var(--gold2);}
+.hero-stat-val.danger{color:var(--danger);}
+.hero-stat-val.warn{color:var(--warn);}
+.hero-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-top:2px;}
+
+/* ALERTS */
+.alerts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.alert-chip{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--r2);font-size:13px;line-height:1.4;}
+.alert-chip .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.alert-chip.ok{background:rgba(63,160,110,0.1);border:1px solid rgba(63,160,110,0.2);color:#7ed4a8;}
+.alert-chip.ok .dot{background:var(--ok);}
+.alert-chip.warn{background:rgba(212,137,42,0.1);border:1px solid rgba(212,137,42,0.25);color:#e4a85a;}
+.alert-chip.warn .dot{background:var(--warn);}
+.alert-chip.danger{background:rgba(224,85,85,0.1);border:1px solid rgba(224,85,85,0.25);color:#eb8080;}
+.alert-chip.danger .dot{background:var(--danger);}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.stat-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--r2);padding:16px 14px;}
+.stat-card-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;}
+.stat-card-val{font-family:'DM Serif Display',serif;font-size:26px;color:var(--gold2);line-height:1;}
+.stat-card-val.danger{color:var(--danger);}
+.stat-card-val.warn{color:var(--warn);}
+.stat-card-unit{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* MINI CHART */
+.mini-chart{display:flex;flex-direction:column;gap:10px;}
+.mini-bar-row{display:flex;align-items:center;gap:10px;}
+.mini-bar-date{font-size:11px;color:var(--muted);min-width:52px;}
+.mini-bar-track{flex:1;height:6px;background:var(--card3);border-radius:3px;overflow:hidden;}
+.mini-bar-fill{height:100%;border-radius:3px;background:var(--gold);transition:width 0.6s ease;}
+.mini-bar-fill.refused{background:var(--danger);}
+.mini-bar-icon{font-size:14px;}
+
+/* TEMP */
+.temp-zones{display:flex;gap:10px;margin-top:4px;}
+.temp-zone-card{flex:1;background:var(--card2);border:1px solid var(--border2);border-radius:var(--r2);padding:14px;text-align:center;position:relative;}
+.temp-zone-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+.temp-range{font-family:'DM Serif Display',serif;font-size:26px;line-height:1;}
+.temp-range.hot{color:#d48a2a;}
+.temp-range.cool{color:#5b9bd4;}
+.temp-edit-btn{position:absolute;top:8px;right:8px;font-size:12px;cursor:pointer;color:var(--muted);background:none;border:none;padding:2px;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:300px;}
+th{text-align:left;padding:10px 10px;color:var(--muted);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:500;border-bottom:1px solid var(--border2);background:var(--card2);}
+td{padding:11px 10px;border-bottom:1px solid var(--border2);color:var(--text);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+
+/* BADGE */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;}
+.badge-ok{background:rgba(63,160,110,0.15);color:#7ed4a8;}
+.badge-no{background:rgba(224,85,85,0.15);color:#eb8080;}
+.badge-warn{background:rgba(212,137,42,0.15);color:#e4a85a;}
+.badge-danger{background:rgba(224,85,85,0.15);color:#eb8080;}
+.badge-muted{background:rgba(107,107,122,0.2);color:var(--muted);}
+.badge-gold{background:rgba(201,168,76,0.15);color:var(--gold2);}
+
+/* ROW ACTIONS */
+.row-actions{display:flex;gap:6px;}
+.act-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:2px;color:var(--muted);transition:color 0.15s;}
+.act-btn:hover{color:var(--text);}
+.act-btn.del:hover{color:var(--danger);}
+
+/* FORM */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.form-input,.form-select{width:100%;background:var(--card2);border:1px solid var(--border2);border-radius:var(--r3);padding:13px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;appearance:none;-webkit-appearance:none;}
+.form-input:focus,.form-select:focus{border-color:var(--gold);}
+.form-input::placeholder{color:var(--muted2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn{width:100%;padding:14px;border-radius:var(--r3);border:none;font-family:'DM Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.18s;}
+.btn-primary{background:var(--gold);color:#0c0c0e;}
+.btn-primary:active{transform:scale(0.97);background:var(--gold2);}
+.btn-outline{background:var(--card2);border:1px solid var(--border2);color:var(--muted);}
+.btn-outline:active{background:var(--card3);}
+.btn-danger{background:rgba(224,85,85,0.15);border:1px solid rgba(224,85,85,0.3);color:#eb8080;}
+.btn-sm{padding:8px 16px;font-size:12px;width:auto;border-radius:30px;}
+
+/* IMAGE UPLOAD */
+.avatar-upload{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.avatar-preview{width:72px;height:72px;border-radius:50%;background:var(--card2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;cursor:pointer;flex-shrink:0;}
+.avatar-preview img{width:100%;height:100%;object-fit:cover;}
+.avatar-upload-info{flex:1;}
+.avatar-upload-info p{font-size:13px;color:var(--muted);line-height:1.5;}
+input[type=file]{display:none;}
+
+/* WEIGHT CHART */
+.weight-chart-wrap{padding:8px 0;}
+canvas{width:100%!important;}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border2);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-info{display:flex;flex-direction:column;gap:2px;}
+.toggle-name{font-size:14px;font-weight:500;color:var(--text);}
+.toggle-desc{font-size:12px;color:var(--muted);}
+.toggle{width:46px;height:26px;background:var(--card3);border-radius:13px;position:relative;cursor:pointer;transition:background 0.3s;border:1px solid var(--border2);flex-shrink:0;}
+.toggle.on{background:var(--gold);border-color:var(--gold);}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:rgba(255,255,255,0.9);border-radius:50%;transition:left 0.25s cubic-bezier(.4,0,.2,1);}
+.toggle.on::after{left:22px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:300;display:none;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--r) var(--r) 0 0;padding:28px 20px 40px;width:100%;max-width:430px;position:relative;animation:slideUp 0.3s cubic-bezier(.4,0,.2,1);max-height:90dvh;overflow-y:auto;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:var(--card3);border-radius:2px;margin:0 auto 20px;}
+.modal-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--cream);margin-bottom:18px;}
+.modal-close{position:absolute;top:20px;right:20px;background:var(--card2);border:1px solid var(--border2);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--muted);}
+
+/* TOAST */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card2);border:1px solid var(--border);color:var(--gold3);padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:500;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* CONFIRM DIALOG */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:400;display:none;align-items:center;justify-content:center;padding:20px;}
+.confirm-overlay.open{display:flex;}
+.confirm-box{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);padding:24px;width:100%;max-width:320px;}
+.confirm-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--cream);margin-bottom:8px;}
+.confirm-msg{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+.confirm-actions{display:flex;gap:10px;}
+.confirm-actions .btn{flex:1;padding:12px;}
+
+/* MISC */
+.delta-pos{color:var(--ok);}
+.delta-neg{color:var(--danger);}
+.empty-msg{text-align:center;padding:36px 0;color:var(--muted);font-size:13px;}
+.settings-section-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--cream);margin-bottom:12px;margin-top:4px;}
+.danger-zone{border-color:rgba(224,85,85,0.2)!important;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+input[type="number"].form-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+input[type="number"].form-input{-moz-appearance:textfield;}
+
+/* MODE SWITCHER */
+.mode-banner{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(90deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03));border-bottom:1px solid var(--border);}
+.mode-label{font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.mode-pills{display:flex;background:var(--card2);border:1px solid var(--border2);border-radius:20px;padding:2px;gap:2px;}
+.mode-pill{padding:5px 14px;border-radius:18px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--muted);transition:all 0.2s;}
+.mode-pill.active{background:var(--gold);color:#0c0c0e;}
+
+/* BREEDER TAG */
+.breeder-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:rgba(201,168,76,0.12);border:1px solid var(--border);border-radius:20px;font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);margin-bottom:12px;}
+
+/* DOCS SECTION */
+.doc-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2);}
+.doc-item:last-child{border-bottom:none;}
+.doc-icon{width:40px;height:40px;border-radius:10px;background:var(--card2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.doc-info{flex:1;min-width:0;}
+.doc-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.doc-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.doc-preview{max-width:100%;border-radius:8px;margin-top:8px;border:1px solid var(--border2);}
+
+/* SCADENZIARIO */
+.sched-item{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--card2);border-radius:var(--r2);margin-bottom:8px;border:1px solid var(--border2);}
+.sched-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.sched-info{flex:1;}
+.sched-title{font-size:13px;font-weight:500;color:var(--text);}
+.sched-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.sched-date{font-size:11px;font-weight:600;color:var(--gold2);margin-top:4px;}
+
+/* GENEALOGY TREE */
+.tree-node{display:inline-flex;flex-direction:column;align-items:center;gap:4px;}
+.tree-box{padding:8px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;font-size:12px;font-weight:500;color:var(--text);text-align:center;cursor:pointer;transition:all 0.2s;min-width:90px;}
+.tree-box:hover{border-color:var(--gold);color:var(--gold2);}
+.tree-box.active-rep{border-color:var(--gold);background:rgba(201,168,76,0.1);color:var(--gold2);}
+.tree-box.unknown{border-style:dashed;color:var(--muted2);cursor:default;}
+.tree-connector{width:1px;height:20px;background:var(--border);}
+.tree-row{display:flex;align-items:flex-end;gap:20px;justify-content:center;}
+.tree-branch{display:flex;flex-direction:column;align-items:center;}
+.tree-h-line{height:1px;background:var(--border);width:100%;}
+.tree-parents{display:flex;gap:24px;justify-content:center;}
+
+/* MORPH CALC */
+.morph-result{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.morph-chip{padding:10px 12px;background:var(--card2);border:1px solid var(--border2);border-radius:10px;text-align:center;}
+.morph-pct{font-family:'DM Serif Display',serif;font-size:22px;color:var(--gold2);}
+.morph-name{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* MATING LOG */
+.mating-card{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r2);padding:14px;margin-bottom:8px;}
+.mating-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.mating-pair{font-size:13px;font-weight:600;color:var(--gold2);}
+.mating-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.mating-field{font-size:11px;color:var(--muted);}
+.mating-val{font-size:12px;font-weight:500;color:var(--text);}
+
+/* FEEDER INVENTORY */
+.feeder-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2);}
+.feeder-item:last-child{border-bottom:none;}
+.feeder-emoji{font-size:28px;}
+.feeder-info{flex:1;}
+.feeder-name{font-size:13px;font-weight:500;color:var(--text);}
+.feeder-count{font-family:'DM Serif Display',serif;font-size:26px;color:var(--gold2);line-height:1;}
+.feeder-count.low{color:var(--danger);}
+.feeder-btns{display:flex;gap:6px;}
+.feeder-btn{width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:var(--card3);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.feeder-btn:active{transform:scale(0.88);}
+
+/* FINANCE */
+.finance-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.finance-card{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r2);padding:12px;text-align:center;}
+.finance-val{font-family:'DM Serif Display',serif;font-size:20px;color:var(--gold2);}
+.finance-val.neg{color:var(--danger);}
+.finance-val.pos{color:var(--ok);}
+.finance-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+.finance-entry{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border2);}
+.finance-entry:last-child{border-bottom:none;}
+.finance-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.finance-entry-info{flex:1;}
+.finance-entry-desc{font-size:12px;color:var(--text);}
+.finance-entry-cat{font-size:10px;color:var(--muted);}
+.finance-entry-amt{font-size:13px;font-weight:600;}
+
+/* PDF BUTTON */
+.pdf-btn{display:flex;align-items:center;gap:8px;padding:12px 16px;background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:var(--r3);cursor:pointer;width:100%;margin-bottom:8px;transition:all 0.2s;}
+.pdf-btn:active{background:rgba(201,168,76,0.15);}
+.pdf-btn-icon{font-size:20px;}
+.pdf-btn-info{flex:1;text-align:left;}
+.pdf-btn-title{font-size:13px;font-weight:500;color:var(--gold2);}
+.pdf-btn-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <div class="wordmark">Reptil<span>Eden</span></div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="notifBtn" onclick="openNotifModal()" title="Notifiche">🔔</button>
+        <button class="icon-btn" onclick="openAddReptile()" title="Aggiungi rettile">＋</button>
+      </div>
+    </div>
+    <div class="reptile-selector" id="reptile-selector"></div>
+  </div>
+
+  <!-- MODE BANNER -->
+  <div class="mode-banner">
+    <span class="mode-label">Modalità</span>
+    <div class="mode-pills">
+      <button class="mode-pill active" id="pill-amateur" onclick="setMode('amateur')">🏠 Amatoriale</button>
+      <button class="mode-pill" id="pill-breeder" onclick="setMode('breeder')">🏆 Allevatore</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- HOME -->
+    <div id="page-home" class="page active">
+      <div class="hero-card">
+        <div class="hero-avatar" id="hero-avatar">🐍</div>
+        <div class="hero-name" id="hero-name">Il tuo rettile</div>
+        <div class="hero-species" id="hero-species">Aggiungi un rettile per iniziare</div>
+        <div class="hero-divider"></div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-val" id="hs-peso">—</div>
+            <div class="hero-stat-lbl">grammi</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val" id="hs-nextfeed">—</div>
+            <div class="hero-stat-lbl">giorni al pasto</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val" id="hs-age">—</div>
+            <div class="hero-stat-lbl">età</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alerts" id="alerts-container"></div>
+
+      <div class="card">
+        <div class="card-label" style="margin-bottom:10px;justify-content:space-between;">
+          <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Temperatura terrario</span>
+          <button class="temp-edit-btn" onclick="openTempModal()" style="position:static;font-size:13px;padding:2px 6px;border-radius:6px;border:1px solid var(--border);background:var(--card2);">✏️ Modifica</button>
+        </div>
+        <div class="temp-zones">
+          <div class="temp-zone-card">
+            <div class="temp-zone-lbl">🔥 Zona calda</div>
+            <div class="temp-range hot" id="temp-hot-display">—°/—°</div>
+          </div>
+          <div class="temp-zone-card">
+            <div class="temp-zone-lbl">❄️ Zona fredda</div>
+            <div class="temp-range cool" id="temp-cool-display">—°/—°</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border2);">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:16px;">💧</span>
+            <span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:500;">Umidità</span>
+          </div>
+          <div style="font-family:'DM Serif Display',serif;font-size:20px;color:#5b9bd4;" id="humidity-display">—%</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Ultimi pasti</div>
+        <div class="mini-chart" id="home-chart"></div>
+      </div>
+    </div>
+
+    <!-- ALIMENTAZIONE -->
+    <div id="page-feed" class="page">
+      <div class="section-head">Pasti <button class="btn btn-outline btn-sm" onclick="openAddFeed()">+ Aggiungi</button></div>
+      <div id="feed-add-form" style="display:none">
+        <div class="card">
+          <div class="card-label" id="feed-form-title">Nuovo pasto</div>
+          <input type="hidden" id="feed-edit-idx" value="-1">
+          <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="feed-date"></div>
+          <div class="form-group"><label class="form-label">Peso preda (g)</label><input type="number" class="form-input" id="feed-weight" placeholder="es. 15"></div>
+          <div class="form-group"><label class="form-label">Esito</label>
+            <select class="form-select" id="feed-esito">
+              <option value="Mangiato">✅ Mangiato</option>
+              <option value="Rifiutato">❌ Rifiutato</option>
+              <option value="Parziale">⚠️ Parziale</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Defecazione</label>
+            <select class="form-select" id="feed-defecazione">
+              <option value="false">No</option>
+              <option value="true">Sì</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="feed-note" placeholder="es. Stava facendo la muta"></div>
+          <button class="btn btn-primary" onclick="saveFeed()">Salva</button>
+          <div style="height:8px"></div>
+          <button class="btn btn-outline" onclick="closeFeedForm()">Annulla</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table><thead><tr><th>Data</th><th>g</th><th>%</th><th>Esito</th><th>Def.</th><th>Note</th><th></th></tr></thead><tbody id="feed-tbody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- IGIENE -->
+    <div id="page-maint" class="page">
+      <div class="section-head">Igiene</div>
+
+      <!-- ESCREMENTI -->
+      <div class="card">
+        <div class="card-label" style="margin-bottom:10px;">🧹 Rimozione escrementi</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:13px;color:var(--muted)" id="last-esc-info">—</div>
+          <button class="btn btn-outline btn-sm" onclick="openAddEsc()">+ Aggiungi</button>
+        </div>
+        <div id="esc-add-form" style="display:none;margin-bottom:12px;">
+          <input type="hidden" id="esc-edit-idx" value="-1">
+          <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="esc-date"></div>
+          <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="esc-note" placeholder="opzionale"></div>
+          <button class="btn btn-primary" onclick="saveEsc()" style="margin-bottom:8px">Salva</button>
+          <button class="btn btn-outline" onclick="closeEscForm()">Annulla</button>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Data</th><th>Note</th><th></th></tr></thead><tbody id="esc-tbody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- PULIZIA PROFONDA -->
+      <div class="card">
+        <div class="card-label" style="margin-bottom:10px;">🏠 Pulizia profonda</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:13px;color:var(--muted)" id="last-deep-info">—</div>
+          <button class="btn btn-outline btn-sm" onclick="openAddDeep()">+ Aggiungi</button>
+        </div>
+        <div id="deep-add-form" style="display:none;margin-bottom:12px;">
+          <input type="hidden" id="deep-edit-idx" value="-1">
+          <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="deep-date"></div>
+          <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="deep-note" placeholder="opzionale"></div>
+          <button class="btn btn-primary" onclick="saveDeep()" style="margin-bottom:8px">Salva</button>
+          <button class="btn btn-outline" onclick="closeDeepForm()">Annulla</button>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Data</th><th>Note</th><th></th></tr></thead><tbody id="deep-tbody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SALUTE -->
+    <div id="page-health" class="page">
+      <div class="section-head">Salute <button class="btn btn-outline btn-sm" onclick="openAddHealth()">+ Aggiungi</button></div>
+      <div id="health-add-form" style="display:none">
+        <div class="card">
+          <div class="card-label" id="health-form-title">Nuovo rilevamento</div>
+          <input type="hidden" id="health-edit-idx" value="-1">
+          <input type="hidden" id="health-edit-type" value="">
+          <div class="form-group"><label class="form-label">Tipo</label>
+            <select class="form-select" id="health-type" onchange="toggleHealthForm()">
+              <option value="peso">⚖️ Peso</option>
+              <option value="muta">🐍 Muta</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="health-date"></div>
+          <div id="health-peso-group" class="form-group"><label class="form-label">Peso (g)</label><input type="number" class="form-input" id="health-peso" placeholder="es. 12"></div>
+          <div id="health-muta-group" class="form-group" style="display:none"><label class="form-label">Muta completa</label>
+            <select class="form-select" id="health-muta"><option value="Sì">Sì</option><option value="No">No</option></select>
+          </div>
+          <button class="btn btn-primary" onclick="saveHealth()">Salva</button>
+          <div style="height:8px"></div>
+          <button class="btn btn-outline" onclick="closeHealthForm()">Annulla</button>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-card-lbl">Peso attuale</div><div class="stat-card-val" id="current-weight">—</div><div class="stat-card-unit">grammi</div></div>
+        <div class="stat-card"><div class="stat-card-lbl">Ultima muta</div><div style="font-size:15px;color:var(--gold2);font-weight:500;margin-top:8px" id="last-muta">—</div><div class="stat-card-unit" id="last-muta-days"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Andamento peso</div>
+        <div class="weight-chart-wrap"><canvas id="weightChart" height="160"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Storico pesi</div>
+        <div class="table-wrap"><table><thead><tr><th>Data</th><th>Peso</th><th>Δ</th><th></th></tr></thead><tbody id="peso-tbody"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-label">Storico mute</div>
+        <div class="table-wrap"><table><thead><tr><th>Data</th><th>Completa</th><th></th></tr></thead><tbody id="muta-tbody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- IMPOSTAZIONI -->
+    <div id="page-settings" class="page">
+      <div class="section-head">Impostazioni</div>
+
+      <div class="card">
+        <div class="settings-section-title">Rettile attivo</div>
+        <div class="avatar-upload">
+          <div class="avatar-preview" id="settings-avatar-preview" onclick="document.getElementById('avatar-file').click()">🐍</div>
+          <div class="avatar-upload-info">
+            <p>Tocca per cambiare immagine.<br>Usa una foto del tuo animale.</p>
+            <input type="file" id="avatar-file" accept="image/*" onchange="handleAvatarUpload(event)">
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="snake-name" placeholder="es. Noodles"></div>
+        <div class="form-group"><label class="form-label">Specie</label><input type="text" class="form-input" id="snake-species" placeholder="es. Ball Python"></div>
+        <div class="form-group"><label class="form-label">Data di nascita</label><input type="date" class="form-input" id="snake-birthday"></div>
+        <div class="form-group"><label class="form-label">Icona (emoji)</label><input type="text" class="form-input" id="snake-emoji" placeholder="es. 🐍 🦎 🐊" maxlength="4"></div>
+        <button class="btn btn-primary" onclick="saveSettings()">Salva info</button>
+      </div>
+
+      <div class="card">
+        <div class="settings-section-title">Intervalli notifiche</div>
+        <div class="form-group"><label class="form-label">Giorni tra i pasti</label><input type="number" class="form-input" id="interval-feed" value="7" min="1" max="30"></div>
+        <div class="form-group"><label class="form-label">Giorni tra pulizie profonde</label><input type="number" class="form-input" id="interval-deep" value="30" min="7" max="90"></div>
+        <button class="btn btn-primary" onclick="saveIntervals()">Salva intervalli</button>
+      </div>
+
+      <div class="card danger-zone">
+        <div class="settings-section-title" style="color:var(--danger)">Zona pericolosa</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Elimina questo rettile e tutti i suoi dati. Azione irreversibile.</p>
+        <button class="btn btn-danger" onclick="confirmDeleteReptile()">🗑 Elimina rettile</button>
+      </div>
+
+      <div class="card" style="margin-top:4px">
+        <div class="settings-section-title">Dati</div>
+        <button class="pdf-btn" onclick="exportPDF('all')">
+          <span class="pdf-btn-icon">📄</span>
+          <div class="pdf-btn-info"><div class="pdf-btn-title">Esporta Report PDF</div><div class="pdf-btn-sub">Salute e pasti — tutti gli animali</div></div>
+          <span style="color:var(--muted);font-size:13px;">→</span>
+        </button>
+        <button class="pdf-btn" onclick="exportPDF('active')">
+          <span class="pdf-btn-icon">🐍</span>
+          <div class="pdf-btn-info"><div class="pdf-btn-title">PDF Rettile attivo</div><div class="pdf-btn-sub" id="pdf-active-name">Solo questo esemplare</div></div>
+          <span style="color:var(--muted);font-size:13px;">→</span>
+        </button>
+        <div style="height:10px"></div>
+        <button class="btn btn-outline" onclick="exportData()" style="margin-bottom:10px;">📁 Esporta backup JSON</button>
+        <button class="btn btn-outline" onclick="document.getElementById('import-file').click()">📂 Importa backup JSON</button>
+        <input type="file" id="import-file" accept=".json,application/json" style="display:none" onchange="importData(event)">
+        <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">L'importazione sovrascriverà tutti i dati attuali.</p>
+      </div>
+    </div>
+
+    <!-- BREEDER PRO PAGE -->
+    <div id="page-breeder" class="page">
+      <div class="section-head"><span>Pro <span class="breeder-tag">🏆 Allevatore</span></span></div>
+
+      <!-- SUB-NAV -->
+      <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px;padding-bottom:2px;">
+        <button class="btn btn-primary btn-sm" onclick="showBreederTab('docs')" id="btab-docs">📄 CITES</button>
+        <button class="btn btn-outline btn-sm" onclick="showBreederTab('sched')" id="btab-sched">⏰ Scad.</button>
+        <button class="btn btn-outline btn-sm" onclick="showBreederTab('tree')" id="btab-tree">🌳 Pedigree</button>
+        <button class="btn btn-outline btn-sm" onclick="showBreederTab('morph')" id="btab-morph">🧬 Morph</button>
+        <button class="btn btn-outline btn-sm" onclick="showBreederTab('mating')" id="btab-mating">❤️ Accopp.</button>
+        <button class="btn btn-outline btn-sm" onclick="showBreederTab('feeder')" id="btab-feeder">🐀 Magaz.</button>
+        <button class="btn btn-outline btn-sm" onclick="showBreederTab('finance')" id="btab-finance">💰 Costi</button>
+      </div>
+
+      <!-- CITES DOCS -->
+      <div id="bsec-docs">
+        <div class="card">
+          <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
+            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Archivio documenti</span>
+            <button class="btn btn-outline btn-sm" onclick="openAddDoc()">+ Aggiungi</button>
+          </div>
+          <div id="doc-add-form" style="display:none;margin-bottom:12px;">
+            <div class="form-group"><label class="form-label">Tipo documento</label>
+              <select class="form-select" id="doc-type">
+                <option value="cites">📜 Certificato CITES</option>
+                <option value="nascita">🐣 Denuncia di nascita</option>
+                <option value="cessione">📋 Documento di cessione</option>
+                <option value="altro">📄 Altro</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Nome / Riferimento</label><input type="text" class="form-input" id="doc-name" placeholder="es. CITES #12345"></div>
+            <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="doc-date"></div>
+            <div class="form-group"><label class="form-label">File (immagine o PDF)</label>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div id="doc-preview-thumb" style="width:60px;height:60px;border-radius:8px;background:var(--card2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;flex-shrink:0;" onclick="document.getElementById('doc-file-input').click()">📎</div>
+                <div style="flex:1;font-size:12px;color:var(--muted);">Tocca per caricare<br>immagine o PDF</div>
+                <input type="file" id="doc-file-input" accept="image/*,application/pdf" style="display:none" onchange="handleDocFile(event)">
+              </div>
+            </div>
+            <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="doc-note" placeholder="opzionale"></div>
+            <button class="btn btn-primary" onclick="saveDoc()" style="margin-bottom:8px">Salva documento</button>
+            <button class="btn btn-outline" onclick="closeDocForm()">Annulla</button>
+          </div>
+          <div id="docs-list"><div class="empty-msg">Nessun documento caricato</div></div>
+        </div>
+      </div>
+
+      <!-- SCADENZIARIO -->
+      <div id="bsec-sched" style="display:none">
+        <div class="card">
+          <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
+            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Scadenziario trattamenti</span>
+            <button class="btn btn-outline btn-sm" onclick="openAddSched()">+ Aggiungi</button>
+          </div>
+          <div id="sched-add-form" style="display:none;margin-bottom:12px;">
+            <div class="form-group"><label class="form-label">Tipo trattamento</label>
+              <select class="form-select" id="sched-type">
+                <option value="sverminazione">💊 Sverminazione</option>
+                <option value="veterinario">🩺 Visita veterinaria</option>
+                <option value="integratore">🧪 Integratore</option>
+                <option value="altro">📌 Altro</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Descrizione</label><input type="text" class="form-input" id="sched-desc" placeholder="es. Fenbendazolo 50mg/kg"></div>
+            <div class="form-group"><label class="form-label">Data scadenza</label><input type="date" class="form-input" id="sched-date"></div>
+            <div class="form-group"><label class="form-label">Ripeti ogni (giorni, 0=mai)</label><input type="number" class="form-input" id="sched-repeat" value="0" min="0"></div>
+            <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="sched-note" placeholder="opzionale"></div>
+            <button class="btn btn-primary" onclick="saveSched()" style="margin-bottom:8px">Salva promemoria</button>
+            <button class="btn btn-outline" onclick="closeSchedForm()">Annulla</button>
+          </div>
+          <div id="sched-list"></div>
+        </div>
+      </div>
+
+      <!-- ALBERO GENEALOGICO -->
+      <div id="bsec-tree" style="display:none">
+        <div class="card">
+          <div class="card-label">Albero genealogico (Pedigree)</div>
+          <div id="tree-container" style="overflow-x:auto;padding:8px 0;"></div>
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border2);">
+            <div class="settings-section-title" style="margin-bottom:10px;">Definisci genitori</div>
+            <div class="form-group"><label class="form-label">Padre (ID o nome)</label>
+              <select class="form-select" id="tree-father">
+                <option value="">— Sconosciuto —</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Madre (ID o nome)</label>
+              <select class="form-select" id="tree-mother">
+                <option value="">— Sconosciuta —</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="saveParents()">Salva relazioni</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MORPH CALCULATOR -->
+      <div id="bsec-morph" style="display:none">
+        <div class="card">
+          <div class="card-label">Calcolatore di Morph</div>
+          <div class="form-group"><label class="form-label">Specie / Preset</label>
+            <select class="form-select" id="morph-species" onchange="loadMorphPresets()">
+              <option value="bp">Ball Python</option>
+              <option value="cg">Corn Snake</option>
+              <option value="leo">Leopard Gecko</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Genotipo Padre</label>
+            <div id="morph-father-genes" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Genotipo Madre</label>
+            <div id="morph-mother-genes" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+          </div>
+          <button class="btn btn-primary" onclick="calcMorph()">Calcola probabilità</button>
+          <div id="morph-results" style="margin-top:12px;"></div>
+        </div>
+      </div>
+
+      <!-- MATING LOG -->
+      <div id="bsec-mating" style="display:none">
+        <div class="card">
+          <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
+            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Registro accoppiamenti</span>
+            <button class="btn btn-outline btn-sm" onclick="openAddMating()">+ Aggiungi</button>
+          </div>
+          <div id="mating-add-form" style="display:none;margin-bottom:12px;">
+            <div class="form-group"><label class="form-label">Maschio</label>
+              <select class="form-select" id="mating-male"></select>
+            </div>
+            <div class="form-group"><label class="form-label">Femmina</label>
+              <select class="form-select" id="mating-female"></select>
+            </div>
+            <div class="form-group"><label class="form-label">Data introduzione</label><input type="date" class="form-input" id="mating-intro"></div>
+            <div class="form-group"><label class="form-label">Data ovulazione</label><input type="date" class="form-input" id="mating-ovul" placeholder=""></div>
+            <div class="form-group"><label class="form-label">Data deposizione</label><input type="date" class="form-input" id="mating-depo"></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Uova fertili</label><input type="number" class="form-input" id="mating-fertile" placeholder="0" min="0"></div>
+              <div class="form-group"><label class="form-label">Uova sterili</label><input type="number" class="form-input" id="mating-sterile" placeholder="0" min="0"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Schiusa prevista</label><input type="date" class="form-input" id="mating-hatch"></div>
+            <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="mating-note" placeholder="opzionale"></div>
+            <button class="btn btn-primary" onclick="saveMating()" style="margin-bottom:8px">Salva</button>
+            <button class="btn btn-outline" onclick="closeMatingForm()">Annulla</button>
+          </div>
+          <div id="mating-list"></div>
+        </div>
+      </div>
+
+      <!-- FEEDER INVENTORY -->
+      <div id="bsec-feeder" style="display:none">
+        <div class="card">
+          <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
+            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Magazzino prede</span>
+            <button class="btn btn-outline btn-sm" onclick="openAddFeeder()">+ Tipo</button>
+          </div>
+          <div id="feeder-add-form" style="display:none;margin-bottom:12px;">
+            <div class="form-group"><label class="form-label">Nome preda</label><input type="text" class="form-input" id="feeder-name" placeholder="es. Topolino adulto"></div>
+            <div class="form-group"><label class="form-label">Emoji</label><input type="text" class="form-input" id="feeder-emoji" placeholder="🐭" maxlength="4" value="🐭"></div>
+            <div class="form-group"><label class="form-label">Quantità iniziale</label><input type="number" class="form-input" id="feeder-qty" value="10" min="0"></div>
+            <div class="form-group"><label class="form-label">Soglia allarme (pz)</label><input type="number" class="form-input" id="feeder-threshold" value="5" min="0"></div>
+            <button class="btn btn-primary" onclick="saveFeeder()" style="margin-bottom:8px">Aggiungi</button>
+            <button class="btn btn-outline" onclick="closeFeederForm()">Annulla</button>
+          </div>
+          <div id="feeder-list"></div>
+          <p style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.5;">💡 Ogni volta che segni un pasto "Mangiato", ti verrà chiesto di scalare una preda dal magazzino.</p>
+        </div>
+      </div>
+
+      <!-- FINANCE -->
+      <div id="bsec-finance" style="display:none">
+        <div class="card">
+          <div class="card-label">Riepilogo finanziario</div>
+          <div class="finance-summary" id="finance-summary"></div>
+        </div>
+        <div class="card">
+          <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
+            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Movimenti</span>
+            <button class="btn btn-outline btn-sm" onclick="openAddFinance()">+ Aggiungi</button>
+          </div>
+          <div id="finance-add-form" style="display:none;margin-bottom:12px;">
+            <div class="form-group"><label class="form-label">Tipo</label>
+              <select class="form-select" id="fin-type">
+                <option value="spesa">📤 Spesa</option>
+                <option value="ricavo">📥 Ricavo</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Categoria</label>
+              <select class="form-select" id="fin-cat">
+                <option value="cibo">🐭 Cibo/Prede</option>
+                <option value="elettricita">⚡ Elettricità</option>
+                <option value="fiera">🎪 Fiere/Expo</option>
+                <option value="veterinario">🩺 Veterinario</option>
+                <option value="attrezzatura">🏠 Attrezzatura</option>
+                <option value="vendita">💸 Vendita nato</option>
+                <option value="altro">📌 Altro</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Importo (€)</label><input type="number" class="form-input" id="fin-amount" placeholder="0.00" min="0" step="0.01"></div>
+            <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="fin-date"></div>
+            <div class="form-group"><label class="form-label">Descrizione</label><input type="text" class="form-input" id="fin-desc" placeholder="es. 10 topolini surgelati"></div>
+            <button class="btn btn-primary" onclick="saveFinance()" style="margin-bottom:8px">Salva</button>
+            <button class="btn btn-outline" onclick="closeFinanceForm()">Annulla</button>
+          </div>
+          <div id="finance-list"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="nav-bar" id="nav-bar">
+    <button class="nav-btn active" data-page="home" onclick="switchPage('home',this)"><span class="ico">🏠</span>Home</button>
+    <button class="nav-btn" data-page="feed" onclick="switchPage('feed',this)"><span class="ico">🐭</span>Pasti</button>
+    <button class="nav-btn" data-page="maint" onclick="switchPage('maint',this)"><span class="ico">🧹</span>Igiene</button>
+    <button class="nav-btn" data-page="health" onclick="switchPage('health',this)"><span class="ico">💚</span>Salute</button>
+    <button class="nav-btn breeder-only" data-page="breeder" onclick="switchPage('breeder',this)" style="display:none"><span class="ico">🏆</span>Pro</button>
+    <button class="nav-btn" data-page="settings" onclick="switchPage('settings',this)"><span class="ico">⚙️</span>Config</button>
+  </div>
+</div>
+
+<!-- MODAL: AGGIUNGI RETTILE -->
+<div class="modal-overlay" id="addReptileModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-close" onclick="closeAddReptile()">✕</div>
+    <div class="modal-title">Nuovo rettile</div>
+    <div class="avatar-upload" style="margin-bottom:16px;">
+      <div class="avatar-preview" id="new-avatar-preview" onclick="document.getElementById('new-avatar-file').click()">🐍</div>
+      <div class="avatar-upload-info"><p>Tocca per aggiungere una foto del tuo animale.</p><input type="file" id="new-avatar-file" accept="image/*" onchange="handleNewAvatarUpload(event)"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Nome *</label><input type="text" class="form-input" id="new-rep-name" placeholder="es. Noodles"></div>
+    <div class="form-group"><label class="form-label">Specie</label><input type="text" class="form-input" id="new-rep-species" placeholder="es. Ball Python"></div>
+    <div class="form-group"><label class="form-label">Data di nascita</label><input type="date" class="form-input" id="new-rep-birthday"></div>
+    <div class="form-group"><label class="form-label">Icona (emoji)</label><input type="text" class="form-input" id="new-rep-emoji" placeholder="🐍" maxlength="4" value="🐍"></div>
+    <button class="btn btn-primary" onclick="saveNewReptile()">Crea rettile</button>
+  </div>
+</div>
+
+<!-- MODAL: TEMPERATURA -->
+<div class="modal-overlay" id="tempModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-close" onclick="closeTempModal()">✕</div>
+    <div class="modal-title">Temperatura terrario</div>
+    <div class="form-group">
+      <label class="form-label">🔥 Zona calda — range (°C)</label>
+      <div class="form-row">
+        <div><label class="form-label" style="font-size:9px">MIN</label><input type="number" class="form-input" id="temp-hot-min" placeholder="es. 29"></div>
+        <div><label class="form-label" style="font-size:9px">MAX</label><input type="number" class="form-input" id="temp-hot-max" placeholder="es. 32"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">❄️ Zona fredda — range (°C)</label>
+      <div class="form-row">
+        <div><label class="form-label" style="font-size:9px">MIN</label><input type="number" class="form-input" id="temp-cool-min" placeholder="es. 24"></div>
+        <div><label class="form-label" style="font-size:9px">MAX</label><input type="number" class="form-input" id="temp-cool-max" placeholder="es. 27"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">💧 Umidità — range (%)</label>
+      <div class="form-row">
+        <div><label class="form-label" style="font-size:9px">MIN</label><input type="number" class="form-input" id="humid-min" placeholder="es. 40"></div>
+        <div><label class="form-label" style="font-size:9px">MAX</label><input type="number" class="form-input" id="humid-max" placeholder="es. 60"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="saveTemp()">Salva</button>
+  </div>
+</div>
+
+<!-- MODAL: NOTIFICHE -->
+<div class="modal-overlay" id="notifModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-close" onclick="closeNotifModal()">✕</div>
+    <div class="modal-title">Notifiche</div>
+    <div id="notif-status" style="margin-bottom:18px;font-size:13px;color:var(--muted)"></div>
+    <div class="toggle-row">
+      <div class="toggle-info"><div class="toggle-name">Pasto imminente</div><div class="toggle-desc">Avviso quando è ora di dar da mangiare</div></div>
+      <div class="toggle on" id="toggle-feed" onclick="toggleNotif('feed')"></div>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info"><div class="toggle-name">Pulizia profonda</div><div class="toggle-desc">Avviso per il cambio substrato</div></div>
+      <div class="toggle on" id="toggle-deep" onclick="toggleNotif('deep')"></div>
+    </div>
+    <div style="height:20px"></div>
+    <button class="btn btn-primary" onclick="requestNotifPermission()">Abilita notifiche push</button>
+  </div>
+</div>
+
+<!-- MODAL: SCALA PREDA -->
+<div class="modal-overlay" id="feederDeductModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-close" onclick="document.getElementById('feederDeductModal').classList.remove('open')">✕</div>
+    <div class="modal-title">Scala preda dal magazzino</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Hai registrato un pasto. Vuoi scalare una preda dal magazzino?</p>
+    <div id="feeder-deduct-list"></div>
+    <div style="height:10px"></div>
+    <button class="btn btn-outline" onclick="document.getElementById('feederDeductModal').classList.remove('open')">Salta</button>
+  </div>
+</div>
+
+<!-- MODAL: DOC PREVIEW -->
+<div class="modal-overlay" id="docPreviewModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-close" onclick="document.getElementById('docPreviewModal').classList.remove('open')">✕</div>
+    <div class="modal-title" id="doc-preview-title">Documento</div>
+    <div id="doc-preview-content" style="text-align:center;"></div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirm-title">Conferma</div>
+    <div class="confirm-msg" id="confirm-msg">Sei sicuro?</div>
+    <div class="confirm-actions">
+      <button class="btn btn-outline" onclick="closeConfirm()">Annulla</button>
+      <button class="btn btn-danger" id="confirm-ok-btn" onclick="confirmOk()">Elimina</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+// DATA SCHEMA
+// ═══════════════════════════════════════════════════════
+const DB_KEY = 'reptilEdenV1';
+
+function defaultReptile(name, species, emoji, birthday, avatar) {
+  return {
+    id: Date.now().toString(),
+    name: name || 'Senza nome',
+    species: species || '',
+    emoji: emoji || '🐍',
+    birthday: birthday || '',
+    avatar: avatar || '',
+    intervals: { feed: 7, deep: 30 },
+    notifToggles: { feed: true, deep: true },
+    temp: { hotMin: 29, hotMax: 32, coolMin: 24, coolMax: 27, humidMin: 40, humidMax: 60 },
+    feeding: [],
+    escrementi: [],
+    puliziaProfonda: [],
+    weights: [],
+    mute: []
+  };
+}
+
+function loadDB() {
+  try {
+    const r = localStorage.getItem(DB_KEY);
+    if (r) return JSON.parse(r);
+  } catch(e) {}
+  // seed with demo data
+  const rep = defaultReptile('Il mio serpente', 'Ball Python', '🐍', '', '');
+  rep.feeding = [
+    { date:'2026-04-02', weight:2, esito:'Mangiato', defecazione:true, note:'' },
+    { date:'2026-04-07', weight:2, esito:'Rifiutato', defecazione:false, note:'Stava facendo la muta' },
+    { date:'2026-04-13', weight:2, esito:'Mangiato', defecazione:false, note:'' },
+    { date:'2026-04-18', weight:2, esito:'Mangiato', defecazione:false, note:'' },
+  ];
+  rep.escrementi = [{ date:'2026-03-27', note:'' }, { date:'2026-04-03', note:'' }];
+  rep.puliziaProfonda = [{ date:'2026-04-03', note:'' }];
+  rep.weights = [{ date:'2026-04-04', peso:12 }];
+  rep.mute = [{ date:'2026-04-12', completa:'Sì' }];
+  return { reptiles: [rep], activeId: rep.id };
+}
+
+function saveDB() { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+
+let db = loadDB();
+let newAvatarData = '';
+let confirmCallback = null;
+let weightChartInstance = null;
+
+function activeRep() { return db.reptiles.find(r => r.id === db.activeId) || db.reptiles[0]; }
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+function switchPage(page, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  btn.classList.add('active');
+  renderPage(page);
+}
+function renderPage(p) {
+  if (p==='home') renderHome();
+  else if (p==='feed') renderFeed();
+  else if (p==='maint') renderMaint();
+  else if (p==='health') renderHealth();
+  else if (p==='settings') { renderSettings(); const el=document.getElementById('pdf-active-name'); if(el) el.textContent=`Solo ${activeRep().name}`; }
+  else if (p==='breeder') renderBreeder();
+}
+function renderCurrentPage() {
+  const active = document.querySelector('.nav-btn.active');
+  if (active) renderPage(active.dataset.page);
+}
+
+// ═══════════════════════════════════════════════════════
+// REPTILE SELECTOR
+// ═══════════════════════════════════════════════════════
+function renderReptileSelector() {
+  const sel = document.getElementById('reptile-selector');
+  sel.innerHTML = db.reptiles.map(r =>
+    `<div class="rep-chip ${r.id===db.activeId?'active':''}" onclick="selectReptile('${r.id}')">
+      <span class="rep-icon">${r.avatar ? `<img src="${r.avatar}" style="width:18px;height:18px;border-radius:50%;object-fit:cover">` : r.emoji}</span>
+      ${r.name}
+    </div>`
+  ).join('');
+}
+
+function selectReptile(id) {
+  db.activeId = id;
+  saveDB();
+  renderReptileSelector();
+  renderCurrentPage();
+}
+
+function openAddReptile() {
+  newAvatarData = '';
+  document.getElementById('new-rep-name').value = '';
+  document.getElementById('new-rep-species').value = '';
+  document.getElementById('new-rep-birthday').value = '';
+  document.getElementById('new-rep-emoji').value = '🐍';
+  document.getElementById('new-avatar-preview').innerHTML = '🐍';
+  document.getElementById('addReptileModal').classList.add('open');
+}
+function closeAddReptile() { document.getElementById('addReptileModal').classList.remove('open'); }
+
+function saveNewReptile() {
+  const name = document.getElementById('new-rep-name').value.trim();
+  if (!name) { showToast('⚠️ Inserisci un nome'); return; }
+  const rep = defaultReptile(
+    name,
+    document.getElementById('new-rep-species').value.trim(),
+    document.getElementById('new-rep-emoji').value.trim() || '🐍',
+    document.getElementById('new-rep-birthday').value,
+    newAvatarData
+  );
+  db.reptiles.push(rep);
+  db.activeId = rep.id;
+  saveDB();
+  closeAddReptile();
+  renderReptileSelector();
+  renderCurrentPage();
+  showToast('✅ Rettile aggiunto!');
+}
+
+function handleNewAvatarUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    newAvatarData = ev.target.result;
+    const p = document.getElementById('new-avatar-preview');
+    p.innerHTML = `<img src="${newAvatarData}">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleAvatarUpload(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const rep = activeRep(); rep.avatar = ev.target.result;
+    saveDB();
+    renderSettingsAvatar();
+    renderReptileSelector();
+    renderHome();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+function daysSince(ds) { if (!ds) return 9999; return Math.floor((new Date() - new Date(ds)) / 86400000); }
+function formatDate(ds) { if (!ds) return '—'; const [y,m,d] = ds.split('-'); return `${d}/${m}/${y}`; }
+function todayISO() { return new Date().toISOString().slice(0,10); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+
+function calcAge(birthday) {
+  if (!birthday) return null;
+  const birth = new Date(birthday);
+  const now = new Date();
+  let years = now.getFullYear() - birth.getFullYear();
+  let months = now.getMonth() - birth.getMonth();
+  if (months < 0) { years--; months += 12; }
+  if (years > 0) return `${years}a ${months}m`;
+  const days = Math.floor((now - birth) / 86400000);
+  if (months > 0) return `${months}m`;
+  return `${days}g`;
+}
+
+// ═══════════════════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════════════════
+function renderHome() {
+  const rep = activeRep(); if (!rep) return;
+
+  // Avatar
+  const avatarEl = document.getElementById('hero-avatar');
+  if (rep.avatar) avatarEl.innerHTML = `<img src="${rep.avatar}">`;
+  else avatarEl.textContent = rep.emoji || '🐍';
+
+  document.getElementById('hero-name').textContent = rep.name;
+  document.getElementById('hero-species').textContent = rep.species || '';
+
+  // Stats
+  const lastW = rep.weights.length ? rep.weights[rep.weights.length-1].peso : '—';
+  document.getElementById('hs-peso').textContent = lastW;
+
+  const lastFD = rep.feeding.length ? rep.feeding[rep.feeding.length-1].date : null;
+  const dsf = daysSince(lastFD);
+  const nextF = Math.max(0, rep.intervals.feed - dsf);
+  const nfEl = document.getElementById('hs-nextfeed');
+  nfEl.textContent = lastFD ? nextF : '—';
+  nfEl.className = 'hero-stat-val' + (nextF===0?' warn': dsf>rep.intervals.feed?' danger':'');
+
+  const age = calcAge(rep.birthday);
+  document.getElementById('hs-age').textContent = age || '—';
+
+  // Temperatura
+  const t = rep.temp;
+  document.getElementById('temp-hot-display').textContent = t ? `${t.hotMin}°/${t.hotMax}°` : '—°/—°';
+  document.getElementById('temp-cool-display').textContent = t ? `${t.coolMin}°/${t.coolMax}°` : '—°/—°';
+  const humidEl = document.getElementById('humidity-display');
+  if (humidEl) humidEl.textContent = t && t.humidMin ? `${t.humidMin}% / ${t.humidMax}%` : '—%';
+
+  // Alerts
+  const alerts = [];
+  if (lastFD) {
+    const over = dsf - rep.intervals.feed;
+    if (over >= 0) alerts.push({type: over>2?'danger':'warn', msg: over===0?'Oggi è il giorno del pasto!':`Pasto in ritardo di ${over} giorn${over===1?'o':'i'}`});
+    else if (nextF <= 2) alerts.push({type:'warn', msg:`Pasto tra ${nextF} giorn${nextF===1?'o':'i'}`});
+    else alerts.push({type:'ok', msg:`Prossimo pasto tra ${nextF} giorni`});
+  }
+  const lastDeep = rep.puliziaProfonda.length ? rep.puliziaProfonda[rep.puliziaProfonda.length-1].date : null;
+  const dsDeep = daysSince(lastDeep);
+  const remainDeep = rep.intervals.deep - dsDeep;
+  if (remainDeep <= 0) alerts.push({type:'danger', msg:'Pulizia profonda necessaria!'});
+  else if (remainDeep <= 5) alerts.push({type:'warn', msg:`Pulizia profonda tra ${remainDeep} giorni`});
+  else alerts.push({type:'ok', msg:`Pulizia profonda tra ${remainDeep} giorni`});
+
+  document.getElementById('alerts-container').innerHTML = alerts.map(a =>
+    `<div class="alert-chip ${a.type}"><div class="dot"></div>${a.msg}</div>`
+  ).join('');
+
+  // Mini chart
+  const chart = document.getElementById('home-chart');
+  const recent = rep.feeding.slice(-5);
+  if (!recent.length) { chart.innerHTML='<div class="empty-msg">Nessun pasto registrato</div>'; return; }
+  chart.innerHTML = recent.map(f => {
+    const ok = f.esito==='Mangiato';
+    const pct = Math.min(100, Math.round(f.weight/12*100*4));
+    return `<div class="mini-bar-row"><div class="mini-bar-date">${formatDate(f.date)}</div><div class="mini-bar-track"><div class="mini-bar-fill ${!ok?'refused':''}" style="width:${pct}%"></div></div><div class="mini-bar-icon">${ok?'✅':'❌'}</div></div>`;
+  }).join('');
+}
+
+// TEMPERATURE MODAL
+function openTempModal() {
+  const t = activeRep().temp;
+  document.getElementById('temp-hot-min').value = t.hotMin;
+  document.getElementById('temp-hot-max').value = t.hotMax;
+  document.getElementById('temp-cool-min').value = t.coolMin;
+  document.getElementById('temp-cool-max').value = t.coolMax;
+  document.getElementById('humid-min').value = t.humidMin || 40;
+  document.getElementById('humid-max').value = t.humidMax || 60;
+  document.getElementById('tempModal').classList.add('open');
+}
+function closeTempModal() { document.getElementById('tempModal').classList.remove('open'); }
+function saveTemp() {
+  const rep = activeRep();
+  rep.temp = {
+    hotMin: parseFloat(document.getElementById('temp-hot-min').value)||29,
+    hotMax: parseFloat(document.getElementById('temp-hot-max').value)||32,
+    coolMin: parseFloat(document.getElementById('temp-cool-min').value)||24,
+    coolMax: parseFloat(document.getElementById('temp-cool-max').value)||27,
+    humidMin: parseFloat(document.getElementById('humid-min').value)||40,
+    humidMax: parseFloat(document.getElementById('humid-max').value)||60
+  };
+  saveDB(); closeTempModal(); renderHome(); showToast('✅ Temperatura salvata!');
+}
+
+// ═══════════════════════════════════════════════════════
+// FEEDING
+// ═══════════════════════════════════════════════════════
+function renderFeed() {
+  const rep = activeRep();
+  const rows = [...rep.feeding].reverse();
+  const tbody = document.getElementById('feed-tbody');
+  if (!rows.length) { tbody.innerHTML='<tr><td colspan="7" class="empty-msg">Nessun pasto</td></tr>'; return; }
+  const lastWeight = rep.weights.length ? rep.weights[rep.weights.length-1].peso : null;
+  tbody.innerHTML = rows.map((f,i) => {
+    const realIdx = rep.feeding.length - 1 - i;
+    const b = f.esito==='Mangiato'?'badge-ok': f.esito==='Parziale'?'badge-warn':'badge-danger';
+    const defBadge = f.defecazione ? '<span class="badge badge-ok">Sì</span>' : '<span class="badge badge-no">No</span>';
+    const pct = lastWeight ? (f.weight / lastWeight * 100).toFixed(1) + '%' : '—';
+    return `<tr>
+      <td>${formatDate(f.date)}</td>
+      <td>${f.weight}g</td>
+      <td style="color:var(--muted);font-size:11px">${pct}</td>
+      <td><span class="badge ${b}">${f.esito}</span></td>
+      <td>${defBadge}</td>
+      <td style="color:var(--muted);font-size:11px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.note||''}</td>
+      <td><div class="row-actions">
+        <button class="act-btn" onclick="editFeed(${realIdx})" title="Modifica">✏️</button>
+        <button class="act-btn del" onclick="deleteFeed(${realIdx})" title="Elimina">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openAddFeed() {
+  document.getElementById('feed-form-title').textContent = 'Nuovo pasto';
+  document.getElementById('feed-edit-idx').value = -1;
+  document.getElementById('feed-date').value = todayISO();
+  document.getElementById('feed-weight').value = '';
+  document.getElementById('feed-esito').value = 'Mangiato';
+  document.getElementById('feed-defecazione').value = 'false';
+  document.getElementById('feed-note').value = '';
+  document.getElementById('feed-add-form').style.display = 'block';
+}
+function closeFeedForm() { document.getElementById('feed-add-form').style.display='none'; }
+
+function editFeed(idx) {
+  const f = activeRep().feeding[idx];
+  document.getElementById('feed-form-title').textContent = 'Modifica pasto';
+  document.getElementById('feed-edit-idx').value = idx;
+  document.getElementById('feed-date').value = f.date;
+  document.getElementById('feed-weight').value = f.weight;
+  document.getElementById('feed-esito').value = f.esito;
+  document.getElementById('feed-defecazione').value = f.defecazione ? 'true' : 'false';
+  document.getElementById('feed-note').value = f.note || '';
+  document.getElementById('feed-add-form').style.display = 'block';
+  document.getElementById('feed-add-form').scrollIntoView({behavior:'smooth'});
+}
+
+function saveFeed() {
+  const date = document.getElementById('feed-date').value;
+  const weight = parseFloat(document.getElementById('feed-weight').value);
+  if (!date || isNaN(weight)) { showToast('⚠️ Inserisci data e peso'); return; }
+  const entry = { date, weight, esito: document.getElementById('feed-esito').value, defecazione: document.getElementById('feed-defecazione').value==='true', note: document.getElementById('feed-note').value.trim() };
+  const rep = activeRep();
+  const idx = parseInt(document.getElementById('feed-edit-idx').value);
+  if (idx >= 0) rep.feeding[idx] = entry;
+  else rep.feeding.push(entry);
+  rep.feeding.sort((a,b) => a.date.localeCompare(b.date));
+  saveDB(); closeFeedForm(); renderFeed(); scheduleNotifications(); showToast('✅ Pasto salvato!');
+  // Feeder deduction in breeder mode
+  if (currentMode==='breeder' && entry.esito==='Mangiato') openFeederDeductModal();
+}
+
+function deleteFeed(idx) {
+  showConfirm('Elimina pasto', 'Vuoi eliminare questo pasto?', () => {
+    activeRep().feeding.splice(idx,1); saveDB(); renderFeed(); showToast('🗑 Eliminato');
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// IGIENE — ESCREMENTI
+// ═══════════════════════════════════════════════════════
+function renderEsc() {
+  const rep = activeRep();
+  const last = rep.escrementi.length ? rep.escrementi[rep.escrementi.length-1].date : null;
+  document.getElementById('last-esc-info').textContent = last ? `Ultima: ${formatDate(last)} (${daysSince(last)} giorni fa)` : 'Nessuna registrazione';
+  const rows = [...rep.escrementi].reverse();
+  const tbody = document.getElementById('esc-tbody');
+  if (!rows.length) { tbody.innerHTML='<tr><td colspan="3" class="empty-msg">Nessun dato</td></tr>'; return; }
+  tbody.innerHTML = rows.map((e,i) => {
+    const realIdx = rep.escrementi.length - 1 - i;
+    return `<tr><td>${formatDate(e.date)}</td><td style="color:var(--muted);font-size:12px">${e.note||''}</td><td><div class="row-actions"><button class="act-btn" onclick="editEsc(${realIdx})">✏️</button><button class="act-btn del" onclick="deleteEsc(${realIdx})">🗑</button></div></td></tr>`;
+  }).join('');
+}
+
+function openAddEsc() { document.getElementById('esc-edit-idx').value=-1; document.getElementById('esc-date').value=todayISO(); document.getElementById('esc-note').value=''; document.getElementById('esc-add-form').style.display='block'; }
+function closeEscForm() { document.getElementById('esc-add-form').style.display='none'; }
+function editEsc(idx) { const e=activeRep().escrementi[idx]; document.getElementById('esc-edit-idx').value=idx; document.getElementById('esc-date').value=e.date; document.getElementById('esc-note').value=e.note||''; document.getElementById('esc-add-form').style.display='block'; }
+function saveEsc() {
+  const date=document.getElementById('esc-date').value; if(!date){showToast('⚠️ Inserisci data');return;}
+  const entry={date, note:document.getElementById('esc-note').value.trim()};
+  const rep=activeRep(); const idx=parseInt(document.getElementById('esc-edit-idx').value);
+  if(idx>=0) rep.escrementi[idx]=entry; else rep.escrementi.push(entry);
+  rep.escrementi.sort((a,b)=>a.date.localeCompare(b.date));
+  saveDB(); closeEscForm(); renderEsc(); showToast('✅ Salvato!');
+}
+function deleteEsc(idx) { showConfirm('Elimina', 'Elimina questo record?', ()=>{ activeRep().escrementi.splice(idx,1); saveDB(); renderEsc(); showToast('🗑 Eliminato'); }); }
+
+// ═══════════════════════════════════════════════════════
+// IGIENE — PULIZIA PROFONDA
+// ═══════════════════════════════════════════════════════
+function renderDeep() {
+  const rep = activeRep();
+  const last = rep.puliziaProfonda.length ? rep.puliziaProfonda[rep.puliziaProfonda.length-1].date : null;
+  document.getElementById('last-deep-info').textContent = last ? `Ultima: ${formatDate(last)} (${daysSince(last)} giorni fa)` : 'Nessuna registrazione';
+  const rows = [...rep.puliziaProfonda].reverse();
+  const tbody = document.getElementById('deep-tbody');
+  if (!rows.length) { tbody.innerHTML='<tr><td colspan="3" class="empty-msg">Nessun dato</td></tr>'; return; }
+  tbody.innerHTML = rows.map((e,i) => {
+    const realIdx = rep.puliziaProfonda.length - 1 - i;
+    return `<tr><td>${formatDate(e.date)}</td><td style="color:var(--muted);font-size:12px">${e.note||''}</td><td><div class="row-actions"><button class="act-btn" onclick="editDeep(${realIdx})">✏️</button><button class="act-btn del" onclick="deleteDeep(${realIdx})">🗑</button></div></td></tr>`;
+  }).join('');
+}
+
+function openAddDeep() { document.getElementById('deep-edit-idx').value=-1; document.getElementById('deep-date').value=todayISO(); document.getElementById('deep-note').value=''; document.getElementById('deep-add-form').style.display='block'; }
+function closeDeepForm() { document.getElementById('deep-add-form').style.display='none'; }
+function editDeep(idx) { const e=activeRep().puliziaProfonda[idx]; document.getElementById('deep-edit-idx').value=idx; document.getElementById('deep-date').value=e.date; document.getElementById('deep-note').value=e.note||''; document.getElementById('deep-add-form').style.display='block'; }
+function saveDeep() {
+  const date=document.getElementById('deep-date').value; if(!date){showToast('⚠️ Inserisci data');return;}
+  const entry={date, note:document.getElementById('deep-note').value.trim()};
+  const rep=activeRep(); const idx=parseInt(document.getElementById('deep-edit-idx').value);
+  if(idx>=0) rep.puliziaProfonda[idx]=entry; else rep.puliziaProfonda.push(entry);
+  rep.puliziaProfonda.sort((a,b)=>a.date.localeCompare(b.date));
+  saveDB(); closeDeepForm(); renderDeep(); scheduleNotifications(); showToast('✅ Salvato!');
+}
+function deleteDeep(idx) { showConfirm('Elimina', 'Elimina questo record?', ()=>{ activeRep().puliziaProfonda.splice(idx,1); saveDB(); renderDeep(); showToast('🗑 Eliminato'); }); }
+
+function renderMaint() { renderEsc(); renderDeep(); }
+
+// ═══════════════════════════════════════════════════════
+// SALUTE
+// ═══════════════════════════════════════════════════════
+function toggleHealthForm() {
+  const t = document.getElementById('health-type').value;
+  document.getElementById('health-peso-group').style.display = t==='peso'?'':'none';
+  document.getElementById('health-muta-group').style.display = t==='muta'?'':'none';
+}
+
+function renderHealth() {
+  const rep = activeRep();
+  const lastW = rep.weights.length ? rep.weights[rep.weights.length-1] : null;
+  const lastM = rep.mute.length ? rep.mute[rep.mute.length-1] : null;
+  document.getElementById('current-weight').textContent = lastW ? lastW.peso : '—';
+  document.getElementById('last-muta').textContent = lastM ? formatDate(lastM.date) : '—';
+  document.getElementById('last-muta-days').textContent = lastM ? `${daysSince(lastM.date)} giorni fa` : '';
+
+  // Weight chart
+  renderWeightChart(rep);
+
+  // Peso table
+  const pesos = [...rep.weights].reverse();
+  document.getElementById('peso-tbody').innerHTML = pesos.length
+    ? pesos.map((w,i) => {
+        const prev = pesos[i+1];
+        const delta = prev ? w.peso-prev.peso : null;
+        const dStr = delta!==null ? `<span class="${delta>=0?'delta-pos':'delta-neg'}">${delta>=0?'+':''}${delta}g</span>` : '—';
+        const realIdx = rep.weights.length-1-i;
+        return `<tr><td>${formatDate(w.date)}</td><td>${w.peso}g</td><td>${dStr}</td><td><div class="row-actions"><button class="act-btn" onclick="editWeight(${realIdx})">✏️</button><button class="act-btn del" onclick="deleteWeight(${realIdx})">🗑</button></div></td></tr>`;
+      }).join('')
+    : '<tr><td colspan="4" class="empty-msg">Nessun dato</td></tr>';
+
+  // Muta table
+  const mute = [...rep.mute].reverse();
+  document.getElementById('muta-tbody').innerHTML = mute.length
+    ? mute.map((m,i) => {
+        const realIdx = rep.mute.length-1-i;
+        const badge = m.completa==='Sì' ? '<span class="badge badge-gold">Sì</span>' : '<span class="badge badge-no">No</span>';
+        return `<tr><td>${formatDate(m.date)}</td><td>${badge}</td><td><div class="row-actions"><button class="act-btn" onclick="editMuta(${realIdx})">✏️</button><button class="act-btn del" onclick="deleteMuta(${realIdx})">🗑</button></div></td></tr>`;
+      }).join('')
+    : '<tr><td colspan="3" class="empty-msg">Nessuna muta</td></tr>';
+}
+
+function renderWeightChart(rep) {
+  const canvas = document.getElementById('weightChart');
+  if (!canvas) return;
+  if (weightChartInstance) { weightChartInstance.destroy(); weightChartInstance = null; }
+  if (!rep.weights.length) return;
+  const sorted = [...rep.weights].sort((a,b)=>a.date.localeCompare(b.date));
+  const labels = sorted.map(w => formatDate(w.date));
+  const data = sorted.map(w => w.peso);
+  // Fix explicit pixel size to avoid responsive resize loop
+  const wrap = canvas.parentElement;
+  const w = wrap.clientWidth || 360;
+  canvas.width = w;
+  canvas.height = 160;
+  canvas.style.width = w + 'px';
+  canvas.style.height = '160px';
+  weightChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        borderColor: '#c9a84c',
+        backgroundColor: 'rgba(201,168,76,0.08)',
+        borderWidth: 2,
+        pointBackgroundColor: '#e8c96a',
+        pointRadius: 5,
+        tension: 0.35,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: false,
+      animation: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#6b6b7a', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#6b6b7a', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+}
+
+function openAddHealth() {
+  document.getElementById('health-form-title').textContent = 'Nuovo rilevamento';
+  document.getElementById('health-edit-idx').value = -1;
+  document.getElementById('health-edit-type').value = '';
+  document.getElementById('health-date').value = todayISO();
+  document.getElementById('health-peso').value = '';
+  document.getElementById('health-type').value = 'peso';
+  toggleHealthForm();
+  document.getElementById('health-add-form').style.display = 'block';
+}
+function closeHealthForm() { document.getElementById('health-add-form').style.display='none'; }
+
+function editWeight(idx) {
+  const w = activeRep().weights[idx];
+  document.getElementById('health-form-title').textContent = 'Modifica peso';
+  document.getElementById('health-edit-idx').value = idx;
+  document.getElementById('health-edit-type').value = 'peso';
+  document.getElementById('health-type').value = 'peso';
+  toggleHealthForm();
+  document.getElementById('health-date').value = w.date;
+  document.getElementById('health-peso').value = w.peso;
+  document.getElementById('health-add-form').style.display = 'block';
+  document.getElementById('health-add-form').scrollIntoView({behavior:'smooth'});
+}
+function editMuta(idx) {
+  const m = activeRep().mute[idx];
+  document.getElementById('health-form-title').textContent = 'Modifica muta';
+  document.getElementById('health-edit-idx').value = idx;
+  document.getElementById('health-edit-type').value = 'muta';
+  document.getElementById('health-type').value = 'muta';
+  toggleHealthForm();
+  document.getElementById('health-date').value = m.date;
+  document.getElementById('health-muta').value = m.completa;
+  document.getElementById('health-add-form').style.display = 'block';
+  document.getElementById('health-add-form').scrollIntoView({behavior:'smooth'});
+}
+
+function saveHealth() {
+  const type = document.getElementById('health-edit-type').value || document.getElementById('health-type').value;
+  const date = document.getElementById('health-date').value;
+  if (!date) { showToast('⚠️ Inserisci la data'); return; }
+  const rep = activeRep();
+  const idx = parseInt(document.getElementById('health-edit-idx').value);
+  if (type==='peso') {
+    const peso = parseFloat(document.getElementById('health-peso').value);
+    if (isNaN(peso)) { showToast('⚠️ Inserisci il peso'); return; }
+    const entry = { date, peso };
+    if (idx>=0) rep.weights[idx]=entry; else rep.weights.push(entry);
+    rep.weights.sort((a,b)=>a.date.localeCompare(b.date));
+  } else {
+    const entry = { date, completa: document.getElementById('health-muta').value };
+    if (idx>=0) rep.mute[idx]=entry; else rep.mute.push(entry);
+    rep.mute.sort((a,b)=>a.date.localeCompare(b.date));
+  }
+  saveDB(); closeHealthForm(); renderHealth(); showToast('✅ Salvato!');
+}
+
+function deleteWeight(idx) { showConfirm('Elimina peso','Eliminare questo rilevamento?',()=>{ activeRep().weights.splice(idx,1); saveDB(); renderHealth(); showToast('🗑 Eliminato'); }); }
+function deleteMuta(idx) { showConfirm('Elimina muta','Eliminare questa muta?',()=>{ activeRep().mute.splice(idx,1); saveDB(); renderHealth(); showToast('🗑 Eliminato'); }); }
+
+// ═══════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════
+function renderSettings() {
+  const rep = activeRep(); if (!rep) return;
+  renderSettingsAvatar();
+  document.getElementById('snake-name').value = rep.name || '';
+  document.getElementById('snake-species').value = rep.species || '';
+  document.getElementById('snake-birthday').value = rep.birthday || '';
+  document.getElementById('snake-emoji').value = rep.emoji || '🐍';
+  document.getElementById('interval-feed').value = rep.intervals.feed;
+  document.getElementById('interval-deep').value = rep.intervals.deep;
+}
+
+function renderSettingsAvatar() {
+  const rep = activeRep();
+  const p = document.getElementById('settings-avatar-preview');
+  if (rep.avatar) p.innerHTML = `<img src="${rep.avatar}">`;
+  else p.textContent = rep.emoji || '🐍';
+}
+
+function saveSettings() {
+  const rep = activeRep();
+  rep.name = document.getElementById('snake-name').value.trim() || rep.name;
+  rep.species = document.getElementById('snake-species').value.trim();
+  rep.birthday = document.getElementById('snake-birthday').value;
+  rep.emoji = document.getElementById('snake-emoji').value.trim() || '🐍';
+  saveDB(); renderReptileSelector(); renderHome(); showToast('✅ Info salvate!');
+}
+
+function saveIntervals() {
+  const rep = activeRep();
+  rep.intervals.feed = parseInt(document.getElementById('interval-feed').value)||7;
+  rep.intervals.deep = parseInt(document.getElementById('interval-deep').value)||30;
+  saveDB(); scheduleNotifications(); showToast('✅ Intervalli salvati!');
+}
+
+function confirmDeleteReptile() {
+  if (db.reptiles.length <= 1) { showToast('⚠️ Non puoi eliminare l\'unico rettile'); return; }
+  showConfirm('Elimina rettile', `Eliminare ${activeRep().name} e tutti i suoi dati?`, () => {
+    db.reptiles = db.reptiles.filter(r => r.id !== db.activeId);
+    db.activeId = db.reptiles[0].id;
+    saveDB(); renderReptileSelector(); renderCurrentPage();
+    document.querySelector('[data-page="home"]').click();
+    showToast('🗑 Rettile eliminato');
+  });
+}
+
+function exportData() {
+  const b = new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const u = URL.createObjectURL(b); const a = document.createElement('a');
+  a.href=u; a.download='reptilEden-backup.json'; a.click(); URL.revokeObjectURL(u);
+  showToast('📁 Backup esportato!');
+}
+
+function importData(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (!imported.reptiles || !Array.isArray(imported.reptiles)) { showToast('⚠️ File non valido'); return; }
+      showConfirm('Importa backup', 'Vuoi sovrascrivere tutti i dati attuali con il backup?', () => {
+        db = imported;
+        if (!db.activeId && db.reptiles.length) db.activeId = db.reptiles[0].id;
+        saveDB();
+        renderReptileSelector();
+        renderCurrentPage();
+        showToast('✅ Backup importato!');
+      });
+    } catch(err) { showToast('⚠️ Errore nel file JSON'); }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════════════════
+// MODE SWITCHER
+// ═══════════════════════════════════════════════════════
+let currentMode = localStorage.getItem('reptilEdenMode') || 'amateur';
+
+function setMode(mode) {
+  currentMode = mode;
+  localStorage.setItem('reptilEdenMode', mode);
+  document.getElementById('pill-amateur').className = 'mode-pill' + (mode==='amateur'?' active':'');
+  document.getElementById('pill-breeder').className = 'mode-pill' + (mode==='breeder'?' active':'');
+  document.querySelectorAll('.breeder-only').forEach(el => {
+    el.style.display = mode==='breeder' ? '' : 'none';
+  });
+  // if on breeder page and switched to amateur, go home
+  const activeNav = document.querySelector('.nav-btn.active');
+  if (mode==='amateur' && activeNav && activeNav.dataset.page==='breeder') {
+    document.querySelector('[data-page="home"]').click();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// BREEDER PAGE SUB-TABS
+// ═══════════════════════════════════════════════════════
+const breederSections = ['docs','sched','tree','morph','mating','feeder','finance'];
+function showBreederTab(tab) {
+  breederSections.forEach(s => {
+    document.getElementById('bsec-'+s).style.display = s===tab ? '' : 'none';
+    const btn = document.getElementById('btab-'+s);
+    if (btn) {
+      btn.className = s===tab ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
+    }
+  });
+  if (tab==='tree') renderTree();
+  if (tab==='feeder') renderFeeder();
+  if (tab==='finance') renderFinance();
+  if (tab==='sched') renderSched();
+  if (tab==='mating') { renderMating(); populateMatingSelects(); }
+  if (tab==='morph') initMorphCalc();
+}
+
+function renderBreeder() { showBreederTab('docs'); renderDocs(); }
+
+// ═══════════════════════════════════════════════════════
+// DATA SCHEMA EXTENSIONS
+// ═══════════════════════════════════════════════════════
+function ensureBreederData(rep) {
+  if (!rep.docs) rep.docs = [];
+  if (!rep.schedules) rep.schedules = [];
+  if (!rep.parents) rep.parents = { fatherId:'', motherId:'' };
+}
+function ensureGlobalBreeder() {
+  if (!db.matings) db.matings = [];
+  if (!db.feeders) db.feeders = [];
+  if (!db.finances) db.finances = [];
+}
+
+// ═══════════════════════════════════════════════════════
+// PDF EXPORT
+// ═══════════════════════════════════════════════════════
+function exportPDF(scope) {
+  const reps = scope==='active' ? [activeRep()] : db.reptiles;
+  let html = `<html><head><meta charset="UTF-8"><style>
+    body{font-family:Arial,sans-serif;color:#222;max-width:800px;margin:0 auto;padding:20px;}
+    h1{color:#7a5c1e;border-bottom:2px solid #c9a84c;padding-bottom:8px;}
+    h2{color:#555;margin-top:24px;margin-bottom:6px;font-size:16px;border-left:4px solid #c9a84c;padding-left:10px;}
+    h3{color:#888;font-size:13px;margin-bottom:4px;}
+    table{width:100%;border-collapse:collapse;margin-top:8px;font-size:12px;}
+    th{background:#f5f0e8;padding:8px;text-align:left;border-bottom:2px solid #c9a84c;}
+    td{padding:7px 8px;border-bottom:1px solid #eee;}
+    tr:nth-child(even) td{background:#fafafa;}
+    .rep-section{page-break-inside:avoid;margin-bottom:32px;background:#fffdf7;border:1px solid #e8dcc8;border-radius:8px;padding:16px;}
+    .badge-ok{color:#2e7d32;font-weight:bold;} .badge-no{color:#c62828;font-weight:bold;}
+    .stat{display:inline-block;background:#f5f0e8;border-radius:6px;padding:6px 14px;margin:4px;font-size:13px;}
+    .stat span{font-weight:bold;color:#7a5c1e;}
+    .footer{margin-top:40px;font-size:10px;color:#aaa;text-align:center;}
+  </style></head><body>
+  <h1>🐍 ReptilEden — Report Salute & Pasti</h1>
+  <p style="color:#888;font-size:12px;">Generato il ${new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'})}</p>`;
+
+  reps.forEach(rep => {
+    const lastW = rep.weights.length ? rep.weights[rep.weights.length-1].peso : '—';
+    const lastF = rep.feeding.length ? rep.feeding[rep.feeding.length-1].date : null;
+    const lastM = rep.mute.length ? rep.mute[rep.mute.length-1].date : null;
+    const age = calcAge(rep.birthday) || '—';
+    html += `<div class="rep-section">
+    <h2>${rep.emoji || '🐍'} ${rep.name} <span style="color:#aaa;font-size:13px;font-weight:normal;">— ${rep.species || 'Specie non specificata'}</span></h2>
+    <div style="margin-bottom:12px;">
+      <div class="stat">Età: <span>${age}</span></div>
+      <div class="stat">Peso attuale: <span>${lastW}g</span></div>
+      <div class="stat">Nascita: <span>${rep.birthday ? formatDate(rep.birthday) : '—'}</span></div>
+      <div class="stat">Ultima muta: <span>${lastM ? formatDate(lastM) : '—'}</span></div>
+    </div>`;
+
+    // Pasti
+    html += `<h3>🐭 Storico pasti (ultimi 20)</h3><table><thead><tr><th>Data</th><th>Peso preda</th><th>Esito</th><th>Defecazione</th><th>Note</th></tr></thead><tbody>`;
+    const feeds = [...rep.feeding].reverse().slice(0,20);
+    if (feeds.length) {
+      feeds.forEach(f => { html += `<tr><td>${formatDate(f.date)}</td><td>${f.weight}g</td><td class="${f.esito==='Mangiato'?'badge-ok':'badge-no'}">${f.esito}</td><td>${f.defecazione?'✓':'—'}</td><td>${f.note||''}</td></tr>`; });
+    } else { html += `<tr><td colspan="5" style="color:#aaa;text-align:center;">Nessun dato</td></tr>`; }
+    html += `</tbody></table>`;
+
+    // Pesi
+    html += `<h3 style="margin-top:16px;">⚖️ Storico pesi</h3><table><thead><tr><th>Data</th><th>Peso</th><th>Variazione</th></tr></thead><tbody>`;
+    const pesos = [...rep.weights].reverse();
+    if (pesos.length) {
+      pesos.forEach((w,i) => {
+        const prev = pesos[i+1];
+        const delta = prev ? (w.peso - prev.peso) : null;
+        html += `<tr><td>${formatDate(w.date)}</td><td>${w.peso}g</td><td>${delta!==null?`${delta>=0?'+':''}${delta}g`:'—'}</td></tr>`;
+      });
+    } else { html += `<tr><td colspan="3" style="color:#aaa;text-align:center;">Nessun dato</td></tr>`; }
+    html += `</tbody></table>`;
+
+    // Mute
+    html += `<h3 style="margin-top:16px;">🐍 Storico mute</h3><table><thead><tr><th>Data</th><th>Completa</th></tr></thead><tbody>`;
+    const mute = [...rep.mute].reverse();
+    if (mute.length) {
+      mute.forEach(m => { html += `<tr><td>${formatDate(m.date)}</td><td class="${m.completa==='Sì'?'badge-ok':'badge-no'}">${m.completa}</td></tr>`; });
+    } else { html += `<tr><td colspan="2" style="color:#aaa;text-align:center;">Nessuna muta</td></tr>`; }
+    html += `</tbody></table></div>`;
+  });
+
+  html += `<div class="footer">ReptilEden — Report generato automaticamente</div></body></html>`;
+
+  const w = window.open('','_blank');
+  if (w) {
+    w.document.write(html);
+    w.document.close();
+    setTimeout(() => { w.print(); }, 500);
+  } else {
+    // fallback: download as html
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='reptilEden-report.html'; a.click();
+    URL.revokeObjectURL(url);
+  }
+  showToast('📄 Report generato!');
+}
+
+// ═══════════════════════════════════════════════════════
+// CITES DOCS
+// ═══════════════════════════════════════════════════════
+let docFileData = '';
+const DOC_TYPE_LABELS = { cites:'📜 CITES', nascita:'🐣 Nascita', cessione:'📋 Cessione', altro:'📄 Altro' };
+
+function openAddDoc() {
+  docFileData='';
+  document.getElementById('doc-type').value='cites';
+  document.getElementById('doc-name').value='';
+  document.getElementById('doc-date').value=todayISO();
+  document.getElementById('doc-note').value='';
+  document.getElementById('doc-preview-thumb').innerHTML='📎';
+  document.getElementById('doc-add-form').style.display='block';
+}
+function closeDocForm() { document.getElementById('doc-add-form').style.display='none'; }
+
+function handleDocFile(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    docFileData = ev.target.result;
+    const isImg = file.type.startsWith('image/');
+    document.getElementById('doc-preview-thumb').innerHTML = isImg
+      ? `<img src="${docFileData}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">`
+      : '📄';
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveDoc() {
+  const name = document.getElementById('doc-name').value.trim();
+  if (!name) { showToast('⚠️ Inserisci un nome'); return; }
+  const rep = activeRep();
+  ensureBreederData(rep);
+  rep.docs.push({
+    id: Date.now().toString(),
+    type: document.getElementById('doc-type').value,
+    name,
+    date: document.getElementById('doc-date').value,
+    note: document.getElementById('doc-note').value.trim(),
+    file: docFileData
+  });
+  saveDB(); closeDocForm(); renderDocs(); showToast('✅ Documento salvato!');
+}
+
+function renderDocs() {
+  const rep = activeRep();
+  ensureBreederData(rep);
+  const el = document.getElementById('docs-list');
+  if (!rep.docs.length) { el.innerHTML='<div class="empty-msg">Nessun documento caricato</div>'; return; }
+  el.innerHTML = rep.docs.map((d,i) => {
+    const isImg = d.file && d.file.startsWith('data:image');
+    const isPDF = d.file && d.file.startsWith('data:application/pdf');
+    return `<div class="doc-item">
+      <div class="doc-icon" style="cursor:${d.file?'pointer':'default'}" onclick="${d.file?`previewDoc(${i})`:''}">
+        ${isImg ? `<img src="${d.file}" style="width:40px;height:40px;object-fit:cover;border-radius:8px;">` : isPDF ? '📄' : '📄'}
+      </div>
+      <div class="doc-info">
+        <div class="doc-name">${d.name}</div>
+        <div class="doc-meta">${DOC_TYPE_LABELS[d.type]||'📄'} ${d.date?'· '+formatDate(d.date):''}</div>
+        ${d.note?`<div class="doc-meta" style="color:var(--muted2)">${d.note}</div>`:''}
+      </div>
+      <div class="row-actions">
+        ${d.file?`<button class="act-btn" onclick="previewDoc(${i})">👁</button>`:''}
+        <button class="act-btn del" onclick="deleteDoc(${i})">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function previewDoc(idx) {
+  const rep = activeRep();
+  const d = rep.docs[idx];
+  document.getElementById('doc-preview-title').textContent = d.name;
+  const isImg = d.file.startsWith('data:image');
+  document.getElementById('doc-preview-content').innerHTML = isImg
+    ? `<img src="${d.file}" class="doc-preview" style="max-width:100%;">`
+    : `<p style="color:var(--muted);margin-bottom:12px;">Anteprima PDF non disponibile in-app.</p>
+       <a href="${d.file}" download="${d.name}.pdf" class="btn btn-primary" style="display:inline-block;text-decoration:none;">⬇ Scarica PDF</a>`;
+  document.getElementById('docPreviewModal').classList.add('open');
+}
+
+function deleteDoc(idx) {
+  showConfirm('Elimina documento','Eliminare questo documento?',()=>{ activeRep().docs.splice(idx,1); saveDB(); renderDocs(); showToast('🗑 Eliminato'); });
+}
+
+// ═══════════════════════════════════════════════════════
+// SCADENZIARIO
+// ═══════════════════════════════════════════════════════
+const SCHED_ICONS = { sverminazione:'💊', veterinario:'🩺', integratore:'🧪', altro:'📌' };
+
+function openAddSched() {
+  document.getElementById('sched-type').value='sverminazione';
+  document.getElementById('sched-desc').value='';
+  document.getElementById('sched-date').value='';
+  document.getElementById('sched-repeat').value='0';
+  document.getElementById('sched-note').value='';
+  document.getElementById('sched-add-form').style.display='block';
+}
+function closeSchedForm() { document.getElementById('sched-add-form').style.display='none'; }
+
+function saveSched() {
+  const date = document.getElementById('sched-date').value;
+  if (!date) { showToast('⚠️ Inserisci la data'); return; }
+  const rep = activeRep(); ensureBreederData(rep);
+  rep.schedules.push({
+    id: Date.now().toString(),
+    type: document.getElementById('sched-type').value,
+    desc: document.getElementById('sched-desc').value.trim(),
+    date,
+    repeat: parseInt(document.getElementById('sched-repeat').value)||0,
+    note: document.getElementById('sched-note').value.trim(),
+    done: false
+  });
+  saveDB(); closeSchedForm(); renderSched(); showToast('✅ Promemoria salvato!');
+}
+
+function renderSched() {
+  const rep = activeRep(); ensureBreederData(rep);
+  const el = document.getElementById('sched-list');
+  if (!rep.schedules.length) { el.innerHTML='<div class="empty-msg">Nessun trattamento programmato</div>'; return; }
+  const sorted = [...rep.schedules].sort((a,b)=>a.date.localeCompare(b.date));
+  const today = todayISO();
+  el.innerHTML = sorted.map((s,i) => {
+    const overdue = s.date < today && !s.done;
+    const upcoming = s.date === today && !s.done;
+    const dotColor = s.done ? 'var(--ok)' : overdue ? 'var(--danger)' : upcoming ? 'var(--warn)' : 'var(--gold)';
+    return `<div class="sched-item">
+      <div class="sched-dot" style="background:${dotColor}"></div>
+      <div class="sched-info">
+        <div class="sched-title">${SCHED_ICONS[s.type]||'📌'} ${s.desc || s.type}</div>
+        <div class="sched-sub">${s.note||''}</div>
+        <div class="sched-date">${overdue?'⚠️ Scaduto: ':upcoming?'🔔 Oggi: ':'📅 '}${formatDate(s.date)}${s.repeat?` · ripete ogni ${s.repeat}gg`:''}</div>
+      </div>
+      <div class="row-actions">
+        ${!s.done?`<button class="act-btn" onclick="markSchedDone('${s.id}')" title="Segna come fatto">✅</button>`:'<span style="font-size:12px;color:var(--ok)">Fatto</span>'}
+        <button class="act-btn del" onclick="deleteSched('${s.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function markSchedDone(id) {
+  const rep = activeRep(); ensureBreederData(rep);
+  const s = rep.schedules.find(x=>x.id===id); if (!s) return;
+  if (s.repeat > 0) {
+    const next = new Date(s.date);
+    next.setDate(next.getDate() + s.repeat);
+    s.date = next.toISOString().slice(0,10);
+    s.done = false;
+  } else { s.done = true; }
+  saveDB(); renderSched(); showToast('✅ Trattamento completato!');
+}
+
+function deleteSched(id) {
+  showConfirm('Elimina promemoria','Eliminare questo promemoria?',()=>{
+    const rep = activeRep(); ensureBreederData(rep);
+    rep.schedules = rep.schedules.filter(s=>s.id!==id);
+    saveDB(); renderSched(); showToast('🗑 Eliminato');
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// ALBERO GENEALOGICO
+// ═══════════════════════════════════════════════════════
+function renderTree() {
+  const rep = activeRep(); ensureBreederData(rep);
+  // Populate selects
+  const opts = `<option value="">— Sconosciuto —</option>` +
+    db.reptiles.filter(r=>r.id!==rep.id).map(r=>`<option value="${r.id}">${r.emoji||'🐍'} ${r.name}</option>`).join('');
+  document.getElementById('tree-father').innerHTML = opts;
+  document.getElementById('tree-mother').innerHTML = opts;
+  document.getElementById('tree-father').value = rep.parents?.fatherId || '';
+  document.getElementById('tree-mother').value = rep.parents?.motherId || '';
+
+  // Build tree visual
+  const father = rep.parents?.fatherId ? db.reptiles.find(r=>r.id===rep.parents.fatherId) : null;
+  const mother = rep.parents?.motherId ? db.reptiles.find(r=>r.id===rep.parents.motherId) : null;
+  const children = db.reptiles.filter(r => r.parents?.fatherId===rep.id || r.parents?.motherId===rep.id);
+
+  let treeHtml = `<div style="text-align:center;padding:8px 0;">`;
+
+  // Parents row
+  if (father || mother) {
+    treeHtml += `<div style="display:flex;justify-content:center;gap:24px;margin-bottom:4px;">`;
+    treeHtml += father
+      ? `<div class="tree-box" onclick="selectReptile('${father.id}')">${father.emoji||'🐍'}<br>${father.name}<br><span style="font-size:9px;color:var(--muted)">Padre</span></div>`
+      : `<div class="tree-box unknown">❓<br>Sconosciuto<br><span style="font-size:9px;">Padre</span></div>`;
+    treeHtml += mother
+      ? `<div class="tree-box" onclick="selectReptile('${mother.id}')">${mother.emoji||'🐍'}<br>${mother.name}<br><span style="font-size:9px;color:var(--muted)">Madre</span></div>`
+      : `<div class="tree-box unknown">❓<br>Sconosciuta<br><span style="font-size:9px;">Madre</span></div>`;
+    treeHtml += `</div><div class="tree-connector" style="margin:0 auto"></div>`;
+  } else {
+    treeHtml += `<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Genitori non definiti</div>`;
+  }
+
+  // Active rep
+  treeHtml += `<div class="tree-box active-rep" style="margin:0 auto 4px;display:inline-block;">${rep.emoji||'🐍'}<br>${rep.name}<br><span style="font-size:9px;">← Questo</span></div>`;
+
+  // Children
+  if (children.length) {
+    treeHtml += `<div class="tree-connector" style="margin:0 auto"></div>`;
+    treeHtml += `<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Discendenti</div>`;
+    treeHtml += `<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:8px;">`;
+    children.forEach(c => {
+      treeHtml += `<div class="tree-box" onclick="selectReptile('${c.id}')" style="min-width:70px;">${c.emoji||'🐍'}<br>${c.name}</div>`;
+    });
+    treeHtml += `</div>`;
+  }
+  treeHtml += `</div>`;
+  document.getElementById('tree-container').innerHTML = treeHtml;
+}
+
+function saveParents() {
+  const rep = activeRep(); ensureBreederData(rep);
+  rep.parents = {
+    fatherId: document.getElementById('tree-father').value,
+    motherId: document.getElementById('tree-mother').value
+  };
+  saveDB(); renderTree(); showToast('✅ Pedigree salvato!');
+}
+
+// ═══════════════════════════════════════════════════════
+// MORPH CALCULATOR
+// ═══════════════════════════════════════════════════════
+const MORPH_GENES = {
+  bp: [
+    {name:'Normal',type:'wild'},
+    {name:'Pastel',type:'dominant'},
+    {name:'Spider',type:'dominant'},
+    {name:'Lesser',type:'dominant'},
+    {name:'Butter',type:'dominant'},
+    {name:'Pinstripe',type:'dominant'},
+    {name:'Clown',type:'recessive'},
+    {name:'Pied',type:'recessive'},
+    {name:'Albino',type:'recessive'},
+    {name:'Axanthic',type:'recessive'},
+    {name:'Cinnamon',type:'dominant'},
+    {name:'GHI',type:'dominant'},
+  ],
+  cg: [
+    {name:'Normal',type:'wild'},{name:'Amel',type:'recessive'},{name:'Anery',type:'recessive'},{name:'Caramel',type:'recessive'},{name:'Charcoal',type:'recessive'},{name:'Dilute',type:'recessive'},
+  ],
+  leo: [
+    {name:'Normal',type:'wild'},{name:'Albino',type:'recessive'},{name:'Blizzard',type:'recessive'},{name:'Eclipse',type:'recessive'},{name:'Tangerine',type:'dominant'},{name:'Mack Snow',type:'codominant'},
+  ]
+};
+
+let selectedFatherGenes = new Set();
+let selectedMotherGenes = new Set();
+
+function initMorphCalc() {
+  loadMorphPresets();
+}
+
+function loadMorphPresets() {
+  const species = document.getElementById('morph-species').value;
+  const genes = MORPH_GENES[species] || [];
+  selectedFatherGenes = new Set();
+  selectedMotherGenes = new Set();
+  document.getElementById('morph-results').innerHTML = '';
+
+  function renderGenes(containerId, selectedSet) {
+    document.getElementById(containerId).innerHTML = genes.filter(g=>g.type!=='wild').map(g => {
+      const sel = selectedSet.has(g.name);
+      return `<button onclick="toggleMorphGene('${containerId}','${g.name}')" style="padding:6px 12px;border-radius:20px;border:1px solid ${sel?'var(--gold)':'var(--border2)'};background:${sel?'rgba(201,168,76,0.15)':'var(--card2)'};color:${sel?'var(--gold2)':'var(--muted)'};font-size:12px;cursor:pointer;margin-bottom:4px;transition:all 0.15s;" id="gene-${containerId}-${g.name.replace(/\s/g,'_')}">${g.name}<br><span style="font-size:9px;opacity:0.7">${g.type}</span></button>`;
+    }).join('');
+  }
+  renderGenes('morph-father-genes', selectedFatherGenes);
+  renderGenes('morph-mother-genes', selectedMotherGenes);
+}
+
+function toggleMorphGene(containerId, geneName) {
+  const set = containerId==='morph-father-genes' ? selectedFatherGenes : selectedMotherGenes;
+  set.has(geneName) ? set.delete(geneName) : set.add(geneName);
+  loadMorphPresets();
+  // restore selections
+  [...selectedFatherGenes].forEach(g => {
+    const el = document.getElementById(`gene-morph-father-genes-${g.replace(/\s/g,'_')}`);
+    if (el) { el.style.borderColor='var(--gold)'; el.style.background='rgba(201,168,76,0.15)'; el.style.color='var(--gold2)'; }
+  });
+  [...selectedMotherGenes].forEach(g => {
+    const el = document.getElementById(`gene-morph-mother-genes-${g.replace(/\s/g,'_')}`);
+    if (el) { el.style.borderColor='var(--gold)'; el.style.background='rgba(201,168,76,0.15)'; el.style.color='var(--gold2)'; }
+  });
+}
+
+function calcMorph() {
+  const species = document.getElementById('morph-species').value;
+  const genes = MORPH_GENES[species] || [];
+  const results = [];
+
+  // Simple probability model for recessive genes
+  const recessiveF = genes.filter(g=>g.type==='recessive'&&selectedFatherGenes.has(g.name)).map(g=>g.name);
+  const recessiveM = genes.filter(g=>g.type==='recessive'&&selectedMotherGenes.has(g.name)).map(g=>g.name);
+  const allRec = [...new Set([...recessiveF,...recessiveM])];
+
+  allRec.forEach(gene => {
+    const inF = recessiveF.includes(gene);
+    const inM = recessiveM.includes(gene);
+    let visPct = 0, hetPct = 0;
+    if (inF && inM) { visPct=25; hetPct=50; }
+    else if (inF || inM) { hetPct=50; }
+    if (visPct>0) results.push({name:`${gene}`, pct:`${visPct}%`, color:'var(--gold2)'});
+    if (hetPct>0) results.push({name:`Het ${gene}`, pct:`${hetPct}%`, color:'var(--muted)'});
+  });
+
+  // Dominant genes
+  const domF = genes.filter(g=>g.type==='dominant'&&selectedFatherGenes.has(g.name)).map(g=>g.name);
+  const domM = genes.filter(g=>g.type==='dominant'&&selectedMotherGenes.has(g.name)).map(g=>g.name);
+  [...new Set([...domF,...domM])].forEach(gene => {
+    const inF=domF.includes(gene), inM=domM.includes(gene);
+    const pct = (inF&&inM)?75:50;
+    results.push({name:gene, pct:`${pct}%`, color:'var(--gold2)'});
+  });
+
+  if (!results.length) {
+    document.getElementById('morph-results').innerHTML='<p style="font-size:13px;color:var(--muted);text-align:center;margin-top:12px;">Seleziona almeno un morph per vedere i risultati.</p>';
+    return;
+  }
+
+  document.getElementById('morph-results').innerHTML = `
+    <div class="card-label" style="margin-top:12px;">Probabilità nati</div>
+    <div class="morph-result">${results.map(r=>`
+      <div class="morph-chip">
+        <div class="morph-pct" style="color:${r.color}">${r.pct}</div>
+        <div class="morph-name">${r.name}</div>
+      </div>`).join('')}
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">⚠️ Calcolo semplificato. Per geni co-dominanti o combinazioni complesse consulta uno strumento dedicato.</p>`;
+}
+
+// ═══════════════════════════════════════════════════════
+// MATING LOG
+// ═══════════════════════════════════════════════════════
+function openAddMating() {
+  populateMatingSelects();
+  ['mating-intro','mating-ovul','mating-depo','mating-hatch'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mating-fertile').value='';
+  document.getElementById('mating-sterile').value='';
+  document.getElementById('mating-note').value='';
+  document.getElementById('mating-add-form').style.display='block';
+}
+function closeMatingForm() { document.getElementById('mating-add-form').style.display='none'; }
+
+function populateMatingSelects() {
+  const opts = db.reptiles.map(r=>`<option value="${r.id}">${r.emoji||'🐍'} ${r.name}</option>`).join('');
+  ['mating-male','mating-female'].forEach(id=>{ document.getElementById(id).innerHTML=opts; });
+}
+
+function saveMating() {
+  const maleId = document.getElementById('mating-male').value;
+  const femaleId = document.getElementById('mating-female').value;
+  if (maleId===femaleId) { showToast('⚠️ Maschio e femmina devono essere diversi'); return; }
+  ensureGlobalBreeder();
+  db.matings.push({
+    id: Date.now().toString(),
+    maleId, femaleId,
+    intro: document.getElementById('mating-intro').value,
+    ovul: document.getElementById('mating-ovul').value,
+    depo: document.getElementById('mating-depo').value,
+    fertile: parseInt(document.getElementById('mating-fertile').value)||0,
+    sterile: parseInt(document.getElementById('mating-sterile').value)||0,
+    hatch: document.getElementById('mating-hatch').value,
+    note: document.getElementById('mating-note').value.trim()
+  });
+  saveDB(); closeMatingForm(); renderMating(); showToast('✅ Accoppiamento salvato!');
+}
+
+function renderMating() {
+  ensureGlobalBreeder();
+  const el = document.getElementById('mating-list');
+  if (!db.matings.length) { el.innerHTML='<div class="empty-msg">Nessun accoppiamento registrato</div>'; return; }
+  el.innerHTML = [...db.matings].reverse().map((m,i) => {
+    const male = db.reptiles.find(r=>r.id===m.maleId);
+    const female = db.reptiles.find(r=>r.id===m.femaleId);
+    const realIdx = db.matings.length-1-i;
+    return `<div class="mating-card">
+      <div class="mating-header">
+        <div class="mating-pair">${male?`${male.emoji||'🐍'} ${male.name}`:'?'} ♂ × ${female?`${female.emoji||'🐍'} ${female.name}`:'?'} ♀</div>
+        <button class="act-btn del" onclick="deleteMating(${realIdx})">🗑</button>
+      </div>
+      <div class="mating-grid">
+        <div><div class="mating-field">Introduzione</div><div class="mating-val">${m.intro?formatDate(m.intro):'—'}</div></div>
+        <div><div class="mating-field">Ovulazione</div><div class="mating-val">${m.ovul?formatDate(m.ovul):'—'}</div></div>
+        <div><div class="mating-field">Deposizione</div><div class="mating-val">${m.depo?formatDate(m.depo):'—'}</div></div>
+        <div><div class="mating-field">Schiusa prevista</div><div class="mating-val">${m.hatch?formatDate(m.hatch):'—'}</div></div>
+        <div><div class="mating-field">Uova fertili</div><div class="mating-val" style="color:var(--ok)">${m.fertile}</div></div>
+        <div><div class="mating-field">Uova sterili</div><div class="mating-val" style="color:var(--danger)">${m.sterile}</div></div>
+      </div>
+      ${m.note?`<div style="margin-top:8px;font-size:11px;color:var(--muted)">${m.note}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function deleteMating(idx) {
+  showConfirm('Elimina accoppiamento','Eliminare questo record?',()=>{ db.matings.splice(idx,1); saveDB(); renderMating(); showToast('🗑 Eliminato'); });
+}
+
+// ═══════════════════════════════════════════════════════
+// FEEDER INVENTORY
+// ═══════════════════════════════════════════════════════
+function openAddFeeder() {
+  document.getElementById('feeder-name').value='';
+  document.getElementById('feeder-emoji').value='🐭';
+  document.getElementById('feeder-qty').value='10';
+  document.getElementById('feeder-threshold').value='5';
+  document.getElementById('feeder-add-form').style.display='block';
+}
+function closeFeederForm() { document.getElementById('feeder-add-form').style.display='none'; }
+
+function saveFeeder() {
+  const name = document.getElementById('feeder-name').value.trim();
+  if (!name) { showToast('⚠️ Inserisci un nome'); return; }
+  ensureGlobalBreeder();
+  db.feeders.push({
+    id: Date.now().toString(),
+    name,
+    emoji: document.getElementById('feeder-emoji').value.trim() || '🐭',
+    qty: parseInt(document.getElementById('feeder-qty').value)||0,
+    threshold: parseInt(document.getElementById('feeder-threshold').value)||5
+  });
+  saveDB(); closeFeederForm(); renderFeeder(); showToast('✅ Aggiunto!');
+}
+
+function renderFeeder() {
+  ensureGlobalBreeder();
+  const el = document.getElementById('feeder-list');
+  if (!db.feeders.length) { el.innerHTML='<div class="empty-msg">Nessuna preda nel magazzino</div>'; return; }
+  el.innerHTML = db.feeders.map(f => `
+    <div class="feeder-item">
+      <div class="feeder-emoji">${f.emoji}</div>
+      <div class="feeder-info">
+        <div class="feeder-name">${f.name}</div>
+        <div style="font-size:11px;color:var(--muted)">Soglia allarme: ${f.threshold}</div>
+      </div>
+      <div class="feeder-count ${f.qty<=f.threshold?'low':''}">${f.qty}</div>
+      <div class="feeder-btns">
+        <button class="feeder-btn" onclick="adjustFeeder('${f.id}',1)">+</button>
+        <button class="feeder-btn" onclick="adjustFeeder('${f.id}',-1)" style="${f.qty<=0?'opacity:0.4':''}" ${f.qty<=0?'disabled':''}>−</button>
+        <button class="act-btn del" onclick="deleteFeeder('${f.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function adjustFeeder(id, delta) {
+  ensureGlobalBreeder();
+  const f = db.feeders.find(x=>x.id===id); if (!f) return;
+  f.qty = Math.max(0, f.qty + delta);
+  saveDB(); renderFeeder();
+  if (f.qty <= f.threshold) showToast(`⚠️ Scorte basse: ${f.name} (${f.qty} rimaste)`);
+}
+
+function deleteFeeder(id) {
+  showConfirm('Elimina preda','Eliminare questo tipo di preda?',()=>{
+    ensureGlobalBreeder(); db.feeders = db.feeders.filter(f=>f.id!==id); saveDB(); renderFeeder();
+  });
+}
+
+function openFeederDeductModal() {
+  ensureGlobalBreeder();
+  if (!db.feeders.length || currentMode!=='breeder') return;
+  const el = document.getElementById('feeder-deduct-list');
+  el.innerHTML = db.feeders.map(f=>`
+    <div class="feeder-item" style="padding:8px 0;">
+      <div class="feeder-emoji">${f.emoji}</div>
+      <div class="feeder-info"><div class="feeder-name">${f.name}</div><div style="font-size:11px;color:var(--muted)">${f.qty} disponibili</div></div>
+      <button class="btn btn-outline btn-sm" onclick="deductFeeder('${f.id}')" ${f.qty<=0?'disabled style="opacity:0.4"':''}>Scala 1</button>
+    </div>`).join('');
+  document.getElementById('feederDeductModal').classList.add('open');
+}
+
+function deductFeeder(id) {
+  ensureGlobalBreeder();
+  const f = db.feeders.find(x=>x.id===id); if (!f) return;
+  f.qty = Math.max(0, f.qty - 1);
+  saveDB();
+  document.getElementById('feederDeductModal').classList.remove('open');
+  showToast(`✅ Preda scalata: ${f.name} (${f.qty} rimaste)`);
+  if (f.qty <= f.threshold) setTimeout(()=>showToast(`⚠️ Scorte basse: ${f.name}!`), 3000);
+}
+
+// ═══════════════════════════════════════════════════════
+// FINANCE
+// ═══════════════════════════════════════════════════════
+const FIN_CAT_ICONS = {cibo:'🐭',elettricita:'⚡',fiera:'🎪',veterinario:'🩺',attrezzatura:'🏠',vendita:'💸',altro:'📌'};
+
+function openAddFinance() {
+  document.getElementById('fin-type').value='spesa';
+  document.getElementById('fin-cat').value='cibo';
+  document.getElementById('fin-amount').value='';
+  document.getElementById('fin-date').value=todayISO();
+  document.getElementById('fin-desc').value='';
+  document.getElementById('finance-add-form').style.display='block';
+}
+function closeFinanceForm() { document.getElementById('finance-add-form').style.display='none'; }
+
+function saveFinance() {
+  const amount = parseFloat(document.getElementById('fin-amount').value);
+  if (isNaN(amount)||amount<=0) { showToast('⚠️ Inserisci un importo valido'); return; }
+  ensureGlobalBreeder();
+  db.finances.push({
+    id: Date.now().toString(),
+    type: document.getElementById('fin-type').value,
+    cat: document.getElementById('fin-cat').value,
+    amount,
+    date: document.getElementById('fin-date').value,
+    desc: document.getElementById('fin-desc').value.trim()
+  });
+  saveDB(); closeFinanceForm(); renderFinance(); showToast('✅ Salvato!');
+}
+
+function renderFinance() {
+  ensureGlobalBreeder();
+  const spese = db.finances.filter(f=>f.type==='spesa').reduce((s,f)=>s+f.amount,0);
+  const ricavi = db.finances.filter(f=>f.type==='ricavo').reduce((s,f)=>s+f.amount,0);
+  const margine = ricavi - spese;
+  document.getElementById('finance-summary').innerHTML = `
+    <div class="finance-card"><div class="finance-val neg">−${spese.toFixed(2)}€</div><div class="finance-lbl">Spese</div></div>
+    <div class="finance-card"><div class="finance-val pos">+${ricavi.toFixed(2)}€</div><div class="finance-lbl">Ricavi</div></div>
+    <div class="finance-card"><div class="finance-val ${margine>=0?'pos':'neg'}">${margine>=0?'+':''}${margine.toFixed(2)}€</div><div class="finance-lbl">Margine</div></div>`;
+  const el = document.getElementById('finance-list');
+  if (!db.finances.length) { el.innerHTML='<div class="empty-msg">Nessun movimento registrato</div>'; return; }
+  el.innerHTML = [...db.finances].reverse().map((f,i)=>{
+    const isRicavo = f.type==='ricavo';
+    return `<div class="finance-entry">
+      <div class="finance-dot" style="background:${isRicavo?'var(--ok)':'var(--danger)'}"></div>
+      <div class="finance-entry-info">
+        <div class="finance-entry-desc">${FIN_CAT_ICONS[f.cat]||'📌'} ${f.desc||f.cat}</div>
+        <div class="finance-entry-cat">${formatDate(f.date)}</div>
+      </div>
+      <div class="finance-entry-amt" style="color:${isRicavo?'var(--ok)':'var(--danger)'}">
+        ${isRicavo?'+':'−'}${f.amount.toFixed(2)}€
+      </div>
+      <button class="act-btn del" onclick="deleteFinance('${f.id}')">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteFinance(id) {
+  showConfirm('Elimina','Eliminare questo movimento?',()=>{ ensureGlobalBreeder(); db.finances=db.finances.filter(f=>f.id!==id); saveDB(); renderFinance(); showToast('🗑 Eliminato'); });
+}
+
+
+function openNotifModal() { document.getElementById('notifModal').classList.add('open'); updateNotifStatus(); updateNotifToggles(); }
+function closeNotifModal() { document.getElementById('notifModal').classList.remove('open'); }
+
+function updateNotifStatus() {
+  const el = document.getElementById('notif-status');
+  if (!('Notification' in window)) { el.textContent='❌ Browser non supportato'; return; }
+  const p = Notification.permission;
+  if (p==='granted') { el.innerHTML='<span style="color:var(--ok)">✅ Notifiche attive</span>'; document.getElementById('notifBtn').classList.add('active'); }
+  else if (p==='denied') el.innerHTML='<span style="color:var(--danger)">❌ Bloccate — abilita nelle impostazioni del browser</span>';
+  else el.innerHTML='<span style="color:var(--warn)">⚠️ Non ancora abilitate</span>';
+}
+
+async function requestNotifPermission() {
+  if (!('Notification' in window)) { showToast('❌ Non supportato'); return; }
+  const p = await Notification.requestPermission();
+  updateNotifStatus();
+  if (p==='granted') { showToast('🔔 Notifiche abilitate!'); closeNotifModal(); scheduleNotifications(); }
+  else showToast('❌ Permesso negato');
+}
+
+function toggleNotif(k) {
+  const rep = activeRep();
+  rep.notifToggles[k] = !rep.notifToggles[k];
+  saveDB(); updateNotifToggles();
+}
+function updateNotifToggles() {
+  const rep = activeRep();
+  ['feed','deep'].forEach(k => {
+    const el = document.getElementById('toggle-'+k);
+    if (!el) return;
+    rep.notifToggles[k] ? el.classList.add('on') : el.classList.remove('on');
+  });
+}
+
+function scheduleNotifications() { if (Notification.permission==='granted') checkAndNotify(); }
+
+let lastNotifTime = {};
+function checkAndNotify() {
+  db.reptiles.forEach(rep => {
+    if (rep.notifToggles.feed) {
+      const lf = rep.feeding.length ? rep.feeding[rep.feeding.length-1].date : null;
+      const ds = daysSince(lf);
+      if (ds >= rep.intervals.feed) {
+        const ov = ds - rep.intervals.feed;
+        sendNotif(`${rep.emoji} ${rep.name} — ${ov===0?'Giorno del pasto!':'Pasto in ritardo!'}`, ov===0?'È ora di dare da mangiare.':`In ritardo di ${ov} giorni.`);
+      }
+    }
+    if (rep.notifToggles.deep) {
+      const ld = rep.puliziaProfonda.length ? rep.puliziaProfonda[rep.puliziaProfonda.length-1].date : null;
+      if (daysSince(ld) >= rep.intervals.deep) sendNotif(`${rep.emoji} ${rep.name} — Pulizia profonda`, 'Tempo di cambiare il substrato!');
+    }
+  });
+}
+
+function sendNotif(title, body) {
+  const now = Date.now();
+  if (lastNotifTime[title] && (now-lastNotifTime[title]) < 3600000) return;
+  lastNotifTime[title] = now;
+  try { new Notification(title, {body, tag:title, renotify:false}); } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════
+// CONFIRM DIALOG
+// ═══════════════════════════════════════════════════════
+function showConfirm(title, msg, cb) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  confirmCallback = cb;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); confirmCallback=null; }
+function confirmOk() { if (confirmCallback) confirmCallback(); closeConfirm(); }
+
+// ═══════════════════════════════════════════════════════
+// SERVICE WORKER
+// ═══════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+renderReptileSelector();
+renderHome();
+updateNotifToggles();
+setMode(currentMode); // apply saved mode
+setInterval(()=>{ if (Notification.permission==='granted') checkAndNotify(); }, 4*60*60*1000);
+setTimeout(()=>{ if (Notification.permission==='granted') checkAndNotify(); }, 2000);
+</script>
+</body>
+</html>
