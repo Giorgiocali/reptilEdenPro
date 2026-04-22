@@ -1,13 +1,13 @@
 {
-  "name": "ReptilEdenPro",
-  "short_name": "ReptilEdenPro",
+  "name": "reptilEdenPro",
+  "short_name": "reptilEdenPro",
   "description": "Registro completo per i tuoi rettili: pasti, manutenzione, salute e notifiche",
-  "start_url": "/ReptilEdenPro/index.html",
+  "start_url": "/reptilEdenPro/index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0c0c0e",
   "theme_color": "#0c0c0e",
-  "scope": "/ReptilEdenPro/",
+  "scope": "/reptilEdenPro/",
   "lang": "it",
   "categories": ["lifestyle", "health", "utilities"],
   "icons": [
@@ -28,7 +28,7 @@
     {
       "name": "Aggiungi Pasto",
       "short_name": "Pasto",
-      "url": "/ReptilEdenPro/index.html#feed",
+      "url": "/reptilEdenPro/index.html#feed",
       "icons": [{ "src": "icon.png", "sizes": "96x96" }]
     }
   ]
