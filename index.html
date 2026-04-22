@@ -290,7 +290,22 @@ input[type="number"].form-input{-moz-appearance:textfield;}
 .finance-entry-cat{font-size:10px;color:var(--muted);}
 .finance-entry-amt{font-size:13px;font-weight:600;}
 
-/* PDF BUTTON */
+/* EMOJI PICKERS */
+.feeder-emoji-opt, .rep-emoji-opt {
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:8px 10px;border-radius:10px;border:2px solid var(--border2);
+  background:var(--card2);cursor:pointer;font-size:22px;
+  color:var(--muted);font-family:'DM Sans',sans-serif;transition:all 0.15s;
+  min-width:52px;
+}
+.feeder-emoji-opt span, .rep-emoji-opt span {
+  font-size:9px;text-transform:uppercase;letter-spacing:0.5px;line-height:1.2;text-align:center;
+}
+.feeder-emoji-opt.selected, .rep-emoji-opt.selected {
+  border-color:var(--gold);background:rgba(201,168,76,0.12);color:var(--gold2);
+}
+.feeder-emoji-opt:active, .rep-emoji-opt:active { transform:scale(0.92); }
+
 .pdf-btn{display:flex;align-items:center;gap:8px;padding:12px 16px;background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:var(--r3);cursor:pointer;width:100%;margin-bottom:8px;transition:all 0.2s;}
 .pdf-btn:active{background:rgba(201,168,76,0.15);}
 .pdf-btn-icon{font-size:20px;}
@@ -388,13 +403,19 @@ input[type="number"].form-input{-moz-appearance:textfield;}
         <div class="card">
           <div class="card-label" id="feed-form-title">Nuovo pasto</div>
           <input type="hidden" id="feed-edit-idx" value="-1">
+          <div class="form-group" id="feed-feeder-group" style="display:none">
+            <label class="form-label">Tipo preda (Magazzino)</label>
+            <select class="form-select" id="feed-feeder-id">
+              <option value="">— Seleziona preda —</option>
+            </select>
+          </div>
           <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="feed-date"></div>
           <div class="form-group"><label class="form-label">Peso preda (g)</label><input type="number" class="form-input" id="feed-weight" placeholder="es. 15"></div>
           <div class="form-group"><label class="form-label">Esito</label>
             <select class="form-select" id="feed-esito">
               <option value="Mangiato">✅ Mangiato</option>
               <option value="Rifiutato">❌ Rifiutato</option>
-              <option value="Parziale">⚠️ Parziale</option>
+              <option value="Rigurgitato">🔴 Rigurgitato</option>
             </select>
           </div>
           <div class="form-group"><label class="form-label">Defecazione</label>
@@ -441,7 +462,7 @@ input[type="number"].form-input{-moz-appearance:textfield;}
 
       <!-- PULIZIA PROFONDA -->
       <div class="card">
-        <div class="card-label" style="margin-bottom:10px;">🏠 Pulizia profonda</div>
+        <div class="card-label" style="margin-bottom:10px;">🏠 Pulizia completa</div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
           <div style="font-size:13px;color:var(--muted)" id="last-deep-info">—</div>
           <button class="btn btn-outline btn-sm" onclick="openAddDeep()">+ Aggiungi</button>
@@ -520,14 +541,26 @@ input[type="number"].form-input{-moz-appearance:textfield;}
         <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="snake-name" placeholder="es. Noodles"></div>
         <div class="form-group"><label class="form-label">Specie</label><input type="text" class="form-input" id="snake-species" placeholder="es. Ball Python"></div>
         <div class="form-group"><label class="form-label">Data di nascita</label><input type="date" class="form-input" id="snake-birthday"></div>
-        <div class="form-group"><label class="form-label">Icona (emoji)</label><input type="text" class="form-input" id="snake-emoji" placeholder="es. 🐍 🦎 🐊" maxlength="4"></div>
+        <div class="form-group"><label class="form-label">Icona</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;" id="settings-emoji-picker">
+            <button type="button" class="rep-emoji-opt" data-emoji="🐍" onclick="selectRepEmoji('settings','🐍')">🐍<br><span>Serpente</span></button>
+            <button type="button" class="rep-emoji-opt" data-emoji="🦎" onclick="selectRepEmoji('settings','🦎')">🦎<br><span>Geco</span></button>
+            <button type="button" class="rep-emoji-opt" data-emoji="🐊" onclick="selectRepEmoji('settings','🐊')">🐊<br><span>Lucertola</span></button>
+            <button type="button" class="rep-emoji-opt" data-emoji="🐌" onclick="selectRepEmoji('settings','🐌')">🐌<br><span>Lumaca</span></button>
+            <button type="button" class="rep-emoji-opt" data-emoji="🐸" onclick="selectRepEmoji('settings','🐸')">🐸<br><span>Rana</span></button>
+            <button type="button" class="rep-emoji-opt" data-emoji="🦎" onclick="selectRepEmoji('settings','🦋')">🦋<br><span>Camaleonte</span></button>
+            <button type="button" class="rep-emoji-opt" data-emoji="🐛" onclick="selectRepEmoji('settings','🐛')">🐛<br><span>Insetto</span></button>
+            <button type="button" class="rep-emoji-opt" data-emoji="🕷️" onclick="selectRepEmoji('settings','🕷️')">🕷️<br><span>Ragno</span></button>
+          </div>
+          <input type="hidden" id="snake-emoji" value="🐍">
+        </div>
         <button class="btn btn-primary" onclick="saveSettings()">Salva info</button>
       </div>
 
       <div class="card">
         <div class="settings-section-title">Intervalli notifiche</div>
         <div class="form-group"><label class="form-label">Giorni tra i pasti</label><input type="number" class="form-input" id="interval-feed" value="7" min="1" max="30"></div>
-        <div class="form-group"><label class="form-label">Giorni tra pulizie profonde</label><input type="number" class="form-input" id="interval-deep" value="30" min="7" max="90"></div>
+        <div class="form-group"><label class="form-label">Giorni tra pulizie complete</label><input type="number" class="form-input" id="interval-deep" value="30" min="7" max="90"></div>
         <button class="btn btn-primary" onclick="saveIntervals()">Salva intervalli</button>
       </div>
 
@@ -691,11 +724,20 @@ input[type="number"].form-input{-moz-appearance:textfield;}
             <button class="btn btn-outline btn-sm" onclick="openAddFeeder()">+ Tipo</button>
           </div>
           <div id="feeder-add-form" style="display:none;margin-bottom:12px;">
-            <div class="form-group"><label class="form-label">Nome preda</label><input type="text" class="form-input" id="feeder-name" placeholder="es. Topolino adulto"></div>
-            <div class="form-group"><label class="form-label">Emoji</label><input type="text" class="form-input" id="feeder-emoji" placeholder="🐭" maxlength="4" value="🐭"></div>
-            <div class="form-group"><label class="form-label">Quantità iniziale</label><input type="number" class="form-input" id="feeder-qty" value="10" min="0"></div>
+            <div class="form-group">
+              <label class="form-label">Tipo preda *</label>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;" id="feeder-emoji-picker">
+                <button type="button" class="feeder-emoji-opt" data-emoji="🐭" onclick="selectFeederEmoji('🐭')">🐭<br><span>Topo</span></button>
+                <button type="button" class="feeder-emoji-opt" data-emoji="🦗" onclick="selectFeederEmoji('🦗')">🦗<br><span>Grillo</span></button>
+              </div>
+              <input type="hidden" id="feeder-emoji" value="">
+            </div>
+            <div class="form-group"><label class="form-label">Nome preda *</label><input type="text" class="form-input" id="feeder-name" placeholder="es. Topolino adulto"></div>
+            <div class="form-group"><label class="form-label">Peso preda (g) — opzionale</label><input type="number" class="form-input" id="feeder-weight" placeholder="es. 15" min="0"></div>
+            <div class="form-group"><label class="form-label">Quantità iniziale</label><input type="number" class="form-input" id="feeder-qty" value="0" min="0"></div>
             <div class="form-group"><label class="form-label">Soglia allarme (pz)</label><input type="number" class="form-input" id="feeder-threshold" value="5" min="0"></div>
-            <button class="btn btn-primary" onclick="saveFeeder()" style="margin-bottom:8px">Aggiungi</button>
+            <input type="hidden" id="feeder-edit-id" value="">
+            <button class="btn btn-primary" onclick="saveFeeder()" style="margin-bottom:8px">Salva</button>
             <button class="btn btn-outline" onclick="closeFeederForm()">Annulla</button>
           </div>
           <div id="feeder-list"></div>
@@ -767,7 +809,19 @@ input[type="number"].form-input{-moz-appearance:textfield;}
     <div class="form-group"><label class="form-label">Nome *</label><input type="text" class="form-input" id="new-rep-name" placeholder="es. Noodles"></div>
     <div class="form-group"><label class="form-label">Specie</label><input type="text" class="form-input" id="new-rep-species" placeholder="es. Ball Python"></div>
     <div class="form-group"><label class="form-label">Data di nascita</label><input type="date" class="form-input" id="new-rep-birthday"></div>
-    <div class="form-group"><label class="form-label">Icona (emoji)</label><input type="text" class="form-input" id="new-rep-emoji" placeholder="🐍" maxlength="4" value="🐍"></div>
+    <div class="form-group"><label class="form-label">Icona</label>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;" id="new-rep-emoji-picker">
+        <button type="button" class="rep-emoji-opt selected" data-emoji="🐍" onclick="selectRepEmoji('new','🐍')">🐍<br><span>Serpente</span></button>
+        <button type="button" class="rep-emoji-opt" data-emoji="🦎" onclick="selectRepEmoji('new','🦎')">🦎<br><span>Geco</span></button>
+        <button type="button" class="rep-emoji-opt" data-emoji="🐊" onclick="selectRepEmoji('new','🐊')">🐊<br><span>Lucertola</span></button>
+        <button type="button" class="rep-emoji-opt" data-emoji="🐌" onclick="selectRepEmoji('new','🐌')">🐌<br><span>Lumaca</span></button>
+        <button type="button" class="rep-emoji-opt" data-emoji="🐸" onclick="selectRepEmoji('new','🐸')">🐸<br><span>Rana</span></button>
+        <button type="button" class="rep-emoji-opt" data-emoji="🦋" onclick="selectRepEmoji('new','🦋')">🦋<br><span>Camaleonte</span></button>
+        <button type="button" class="rep-emoji-opt" data-emoji="🐛" onclick="selectRepEmoji('new','🐛')">🐛<br><span>Insetto</span></button>
+        <button type="button" class="rep-emoji-opt" data-emoji="🕷️" onclick="selectRepEmoji('new','🕷️')">🕷️<br><span>Ragno</span></button>
+      </div>
+      <input type="hidden" id="new-rep-emoji" value="🐍">
+    </div>
     <button class="btn btn-primary" onclick="saveNewReptile()">Crea rettile</button>
   </div>
 </div>
@@ -815,7 +869,7 @@ input[type="number"].form-input{-moz-appearance:textfield;}
       <div class="toggle on" id="toggle-feed" onclick="toggleNotif('feed')"></div>
     </div>
     <div class="toggle-row">
-      <div class="toggle-info"><div class="toggle-name">Pulizia profonda</div><div class="toggle-desc">Avviso per il cambio substrato</div></div>
+      <div class="toggle-info"><div class="toggle-name">Pulizia completa</div><div class="toggle-desc">Avviso per il cambio substrato</div></div>
       <div class="toggle on" id="toggle-deep" onclick="toggleNotif('deep')"></div>
     </div>
     <div class="toggle-row" id="toggle-row-sched" style="display:none">
@@ -969,6 +1023,10 @@ function openAddReptile() {
   document.getElementById('new-rep-birthday').value = '';
   document.getElementById('new-rep-emoji').value = '🐍';
   document.getElementById('new-avatar-preview').innerHTML = '🐍';
+  // Reset emoji picker to snake
+  document.querySelectorAll('#new-rep-emoji-picker .rep-emoji-opt').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.emoji === '🐍');
+  });
   document.getElementById('addReptileModal').classList.add('open');
 }
 function closeAddReptile() { document.getElementById('addReptileModal').classList.remove('open'); }
@@ -1083,9 +1141,9 @@ function renderHome() {
   const lastDeep = rep.puliziaProfonda.length ? rep.puliziaProfonda[rep.puliziaProfonda.length-1].date : null;
   const dsDeep = daysSince(lastDeep);
   const remainDeep = rep.intervals.deep - dsDeep;
-  if (remainDeep <= 0) alerts.push({type:'danger', msg:'Pulizia profonda necessaria!'});
-  else if (remainDeep <= 5) alerts.push({type:'warn', msg:`Pulizia profonda tra ${remainDeep} giorni`});
-  else alerts.push({type:'ok', msg:`Pulizia profonda tra ${remainDeep} giorni`});
+  if (remainDeep <= 0) alerts.push({type:'danger', msg:'Pulizia completa necessaria!'});
+  else if (remainDeep <= 5) alerts.push({type:'warn', msg:`Pulizia completa tra ${remainDeep} giorni`});
+  else alerts.push({type:'ok', msg:`Pulizia completa tra ${remainDeep} giorni`});
 
   // Scadenziario alerts in breeder mode
   if (currentMode === 'breeder' && rep.schedules && rep.schedules.length) {
@@ -1095,6 +1153,16 @@ function renderHome() {
       if (daysLeft < 0) alerts.push({type:'danger', msg:`${SCHED_ICONS[s.type]||'📌'} Scaduto: ${label}`});
       else if (daysLeft === 0) alerts.push({type:'warn', msg:`${SCHED_ICONS[s.type]||'📌'} Oggi: ${label}`});
       else if (daysLeft <= 3) alerts.push({type:'warn', msg:`${SCHED_ICONS[s.type]||'📌'} ${label} tra ${daysLeft}gg`});
+    });
+  }
+
+  // Scorte basse in modalità allevatore
+  if (currentMode === 'breeder') {
+    ensureGlobalBreeder();
+    db.feeders.forEach(f => {
+      if (f.qty <= f.threshold) {
+        alerts.push({type: f.qty === 0 ? 'danger' : 'warn', msg:`${f.emoji||'🐭'} Scorte ${f.qty===0?'esaurite':'basse'}: ${f.name} (${f.qty} rimaste)`});
+      }
     });
   }
 
@@ -1149,7 +1217,7 @@ function renderFeed() {
   const lastWeight = rep.weights.length ? rep.weights[rep.weights.length-1].peso : null;
   tbody.innerHTML = rows.map((f,i) => {
     const realIdx = rep.feeding.length - 1 - i;
-    const b = f.esito==='Mangiato'?'badge-ok': f.esito==='Parziale'?'badge-warn':'badge-danger';
+    const b = f.esito==='Mangiato'?'badge-ok': f.esito==='Rigurgitato'?'badge-danger':'badge-no';
     const defBadge = f.defecazione ? '<span class="badge badge-ok">Sì</span>' : '<span class="badge badge-no">No</span>';
     const pct = lastWeight ? (f.weight / lastWeight * 100).toFixed(1) + '%' : '—';
     return `<tr>
@@ -1175,6 +1243,21 @@ function openAddFeed() {
   document.getElementById('feed-esito').value = 'Mangiato';
   document.getElementById('feed-defecazione').value = 'false';
   document.getElementById('feed-note').value = '';
+  // Breeder: show feeder selector
+  const feederGroup = document.getElementById('feed-feeder-group');
+  if (currentMode === 'breeder') {
+    ensureGlobalBreeder();
+    feederGroup.style.display = '';
+    const sel = document.getElementById('feed-feeder-id');
+    sel.innerHTML = '<option value="">— Seleziona preda —</option>' +
+      db.feeders.map(f => `<option value="${f.id}">${f.emoji || ''} ${f.name}${f.weight ? ` (${f.weight}g)` : ''} — ${f.qty} disp.</option>`).join('');
+    sel.onchange = function() {
+      const f = db.feeders.find(x => x.id === this.value);
+      if (f && f.weight) document.getElementById('feed-weight').value = f.weight;
+    };
+  } else {
+    feederGroup.style.display = 'none';
+  }
   document.getElementById('feed-add-form').style.display = 'block';
 }
 function closeFeedForm() { document.getElementById('feed-add-form').style.display='none'; }
@@ -1196,7 +1279,8 @@ function saveFeed() {
   const date = document.getElementById('feed-date').value;
   const weight = parseFloat(document.getElementById('feed-weight').value);
   if (!date || isNaN(weight)) { showToast('⚠️ Inserisci data e peso'); return; }
-  const entry = { date, weight, esito: document.getElementById('feed-esito').value, defecazione: document.getElementById('feed-defecazione').value==='true', note: document.getElementById('feed-note').value.trim() };
+  const feederId = currentMode==='breeder' ? (document.getElementById('feed-feeder-id').value || '') : '';
+  const entry = { date, weight, esito: document.getElementById('feed-esito').value, defecazione: document.getElementById('feed-defecazione').value==='true', note: document.getElementById('feed-note').value.trim(), feederId };
   const rep = activeRep();
   const idx = parseInt(document.getElementById('feed-edit-idx').value);
   if (idx >= 0) rep.feeding[idx] = entry;
@@ -1204,7 +1288,7 @@ function saveFeed() {
   rep.feeding.sort((a,b) => a.date.localeCompare(b.date));
   saveDB(); closeFeedForm(); renderFeed(); scheduleNotifications(); showToast('✅ Pasto salvato!');
   // Feeder deduction in breeder mode
-  if (currentMode==='breeder' && entry.esito==='Mangiato') openFeederDeductModal();
+  if (currentMode==='breeder' && entry.esito==='Mangiato') openFeederDeductModal(feederId);
 }
 
 function deleteFeed(idx) {
@@ -1419,6 +1503,23 @@ function deleteWeight(idx) { showConfirm('Elimina peso','Eliminare questo rileva
 function deleteMuta(idx) { showConfirm('Elimina muta','Eliminare questa muta?',()=>{ activeRep().mute.splice(idx,1); saveDB(); renderHealth(); showToast('🗑 Eliminato'); }); }
 
 // ═══════════════════════════════════════════════════════
+// EMOJI PICKERS
+// ═══════════════════════════════════════════════════════
+function selectRepEmoji(context, emoji) {
+  const pickerId = context === 'settings' ? 'settings-emoji-picker' : 'new-rep-emoji-picker';
+  const inputId  = context === 'settings' ? 'snake-emoji' : 'new-rep-emoji';
+  document.getElementById(inputId).value = emoji;
+  document.querySelectorAll(`#${pickerId} .rep-emoji-opt`).forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.emoji === emoji || btn.getAttribute('onclick').includes(`'${emoji}'`));
+  });
+  // also update the avatar preview if no photo set
+  if (context === 'new') {
+    const preview = document.getElementById('new-avatar-preview');
+    if (!preview.querySelector('img')) preview.textContent = emoji;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
 // SETTINGS
 // ═══════════════════════════════════════════════════════
 function renderSettings() {
@@ -1427,7 +1528,12 @@ function renderSettings() {
   document.getElementById('snake-name').value = rep.name || '';
   document.getElementById('snake-species').value = rep.species || '';
   document.getElementById('snake-birthday').value = rep.birthday || '';
-  document.getElementById('snake-emoji').value = rep.emoji || '🐍';
+  const currentEmoji = rep.emoji || '🐍';
+  document.getElementById('snake-emoji').value = currentEmoji;
+  // Highlight correct emoji in picker
+  document.querySelectorAll('#settings-emoji-picker .rep-emoji-opt').forEach(btn => {
+    btn.classList.toggle('selected', btn.getAttribute('onclick').includes(`'${currentEmoji}'`));
+  });
   document.getElementById('interval-feed').value = rep.intervals.feed;
   document.getElementById('interval-deep').value = rep.intervals.deep;
 }
@@ -1926,55 +2032,81 @@ function deleteMating(idx) {
 // ═══════════════════════════════════════════════════════
 // FEEDER INVENTORY
 // ═══════════════════════════════════════════════════════
-function openAddFeeder() {
-  document.getElementById('feeder-name').value='';
-  document.getElementById('feeder-emoji').value='🐭';
-  document.getElementById('feeder-qty').value='10';
-  document.getElementById('feeder-threshold').value='5';
-  document.getElementById('feeder-add-form').style.display='block';
+function selectFeederEmoji(emoji) {
+  document.getElementById('feeder-emoji').value = emoji;
+  document.querySelectorAll('.feeder-emoji-opt').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.emoji === emoji);
+  });
 }
-function closeFeederForm() { document.getElementById('feeder-add-form').style.display='none'; }
+
+function openAddFeeder() {
+  document.getElementById('feeder-edit-id').value = '';
+  document.getElementById('feeder-name').value = '';
+  document.getElementById('feeder-emoji').value = '';
+  document.getElementById('feeder-weight').value = '';
+  document.getElementById('feeder-qty').value = '0';
+  document.getElementById('feeder-threshold').value = '5';
+  document.querySelectorAll('.feeder-emoji-opt').forEach(btn => btn.classList.remove('selected'));
+  document.getElementById('feeder-add-form').style.display = 'block';
+}
+function closeFeederForm() { document.getElementById('feeder-add-form').style.display = 'none'; }
+
+function editFeeder(id) {
+  ensureGlobalBreeder();
+  const f = db.feeders.find(x => x.id === id); if (!f) return;
+  document.getElementById('feeder-edit-id').value = f.id;
+  document.getElementById('feeder-name').value = f.name;
+  document.getElementById('feeder-emoji').value = f.emoji || '';
+  document.getElementById('feeder-weight').value = f.weight || '';
+  document.getElementById('feeder-qty').value = f.qty;
+  document.getElementById('feeder-threshold').value = f.threshold;
+  document.querySelectorAll('.feeder-emoji-opt').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.emoji === f.emoji);
+  });
+  document.getElementById('feeder-add-form').style.display = 'block';
+  document.getElementById('feeder-add-form').scrollIntoView({ behavior: 'smooth' });
+}
 
 function saveFeeder() {
   const name = document.getElementById('feeder-name').value.trim();
-  if (!name) { showToast('⚠️ Inserisci un nome'); return; }
+  const emoji = document.getElementById('feeder-emoji').value;
+  if (!name) { showToast('⚠️ Inserisci il nome della preda'); return; }
+  if (!emoji) { showToast('⚠️ Seleziona il tipo di preda'); return; }
   ensureGlobalBreeder();
-  db.feeders.push({
-    id: Date.now().toString(),
-    name,
-    emoji: document.getElementById('feeder-emoji').value.trim() || '🐭',
-    qty: parseInt(document.getElementById('feeder-qty').value)||0,
-    threshold: parseInt(document.getElementById('feeder-threshold').value)||5
-  });
-  saveDB(); closeFeederForm(); renderFeeder(); showToast('✅ Aggiunto!');
+  const editId = document.getElementById('feeder-edit-id').value;
+  const entry = {
+    id: editId || Date.now().toString(),
+    name, emoji,
+    weight: parseFloat(document.getElementById('feeder-weight').value) || null,
+    qty: parseInt(document.getElementById('feeder-qty').value) || 0,
+    threshold: parseInt(document.getElementById('feeder-threshold').value) || 5
+  };
+  if (editId) {
+    const idx = db.feeders.findIndex(f => f.id === editId);
+    if (idx >= 0) db.feeders[idx] = entry;
+  } else {
+    db.feeders.push(entry);
+  }
+  saveDB(); closeFeederForm(); renderFeeder(); showToast('✅ Salvato!');
 }
 
 function renderFeeder() {
   ensureGlobalBreeder();
   const el = document.getElementById('feeder-list');
-  if (!db.feeders.length) { el.innerHTML='<div class="empty-msg">Nessuna preda nel magazzino</div>'; return; }
+  if (!db.feeders.length) { el.innerHTML = '<div class="empty-msg">Nessuna preda nel magazzino</div>'; return; }
   el.innerHTML = db.feeders.map(f => `
     <div class="feeder-item">
-      <div class="feeder-emoji">${f.emoji}</div>
+      <div class="feeder-emoji">${f.emoji || '❓'}</div>
       <div class="feeder-info">
-        <div class="feeder-name">${f.name}</div>
+        <div class="feeder-name">${f.name}${f.weight ? ` <span style="color:var(--muted);font-size:11px">(${f.weight}g)</span>` : ''}</div>
         <div style="font-size:11px;color:var(--muted)">Soglia allarme: ${f.threshold}</div>
       </div>
-      <div class="feeder-count ${f.qty<=f.threshold?'low':''}">${f.qty}</div>
+      <div class="feeder-count ${f.qty <= f.threshold ? 'low' : ''}">${f.qty}</div>
       <div class="feeder-btns">
-        <button class="feeder-btn" onclick="adjustFeeder('${f.id}',1)">+</button>
-        <button class="feeder-btn" onclick="adjustFeeder('${f.id}',-1)" style="${f.qty<=0?'opacity:0.4':''}" ${f.qty<=0?'disabled':''}>−</button>
-        <button class="act-btn del" onclick="deleteFeeder('${f.id}')">🗑</button>
+        <button class="act-btn" onclick="editFeeder('${f.id}')" title="Modifica">✏️</button>
+        <button class="act-btn del" onclick="deleteFeeder('${f.id}')" title="Elimina">🗑</button>
       </div>
     </div>`).join('');
-}
-
-function adjustFeeder(id, delta) {
-  ensureGlobalBreeder();
-  const f = db.feeders.find(x=>x.id===id); if (!f) return;
-  f.qty = Math.max(0, f.qty + delta);
-  saveDB(); renderFeeder();
-  if (f.qty <= f.threshold) showToast(`⚠️ Scorte basse: ${f.name} (${f.qty} rimaste)`);
 }
 
 function deleteFeeder(id) {
@@ -1983,14 +2115,14 @@ function deleteFeeder(id) {
   });
 }
 
-function openFeederDeductModal() {
+function openFeederDeductModal(preselectedId) {
   ensureGlobalBreeder();
   if (!db.feeders.length || currentMode!=='breeder') return;
   const el = document.getElementById('feeder-deduct-list');
   el.innerHTML = db.feeders.map(f=>`
-    <div class="feeder-item" style="padding:8px 0;">
-      <div class="feeder-emoji">${f.emoji}</div>
-      <div class="feeder-info"><div class="feeder-name">${f.name}</div><div style="font-size:11px;color:var(--muted)">${f.qty} disponibili</div></div>
+    <div class="feeder-item" style="padding:8px 0;${preselectedId===f.id?'background:rgba(201,168,76,0.06);border-radius:10px;padding:8px;':''}">
+      <div class="feeder-emoji">${f.emoji||'❓'}</div>
+      <div class="feeder-info"><div class="feeder-name">${f.name}${preselectedId===f.id?' <span style="color:var(--gold2);font-size:10px">← selezionata</span>':''}</div><div style="font-size:11px;color:var(--muted)">${f.qty} disponibili</div></div>
       <button class="btn btn-outline btn-sm" onclick="deductFeeder('${f.id}')" ${f.qty<=0?'disabled style="opacity:0.4"':''}>Scala 1</button>
     </div>`).join('');
   document.getElementById('feederDeductModal').classList.add('open');
@@ -2121,7 +2253,7 @@ function checkAndNotify() {
     }
     if (rep.notifToggles.deep) {
       const ld = rep.puliziaProfonda.length ? rep.puliziaProfonda[rep.puliziaProfonda.length-1].date : null;
-      if (daysSince(ld) >= rep.intervals.deep) sendNotif(`${rep.emoji} ${rep.name} — Pulizia profonda`, 'Tempo di cambiare il substrato!');
+      if (daysSince(ld) >= rep.intervals.deep) sendNotif(`${rep.emoji} ${rep.name} — Pulizia completa`, 'Tempo di cambiare il substrato!');
     }
     // Scadenziario trattamenti (breeder)
     if (rep.notifToggles.sched && rep.schedules && rep.schedules.length) {
