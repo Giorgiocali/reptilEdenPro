@@ -320,7 +320,7 @@ input[type="number"].form-input{-moz-appearance:textfield;}
     <span class="mode-label">Modalità</span>
     <div class="mode-pills">
       <button class="mode-pill active" id="pill-amateur" onclick="setMode('amateur')">🏠 Amatoriale</button>
-      <button class="mode-pill" id="pill-breeder" onclick="setMode('breeder')">🏆 Allevatore</button>
+      <button class="mode-pill" id="pill-breeder" onclick="setMode('breeder')">🧑‍🌾 Allevatore</button>
     </div>
   </div>
 
@@ -353,7 +353,7 @@ input[type="number"].form-input{-moz-appearance:textfield;}
 
       <div class="card">
         <div class="card-label" style="margin-bottom:10px;justify-content:space-between;">
-          <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Temperatura terrario</span>
+          <span>Temperatura terrario</span>
           <button class="temp-edit-btn" onclick="openTempModal()" style="position:static;font-size:13px;padding:2px 6px;border-radius:6px;border:1px solid var(--border);background:var(--card2);">✏️ Modifica</button>
         </div>
         <div class="temp-zones">
@@ -559,14 +559,13 @@ input[type="number"].form-input{-moz-appearance:textfield;}
 
     <!-- BREEDER PRO PAGE -->
     <div id="page-breeder" class="page">
-      <div class="section-head"><span>Pro <span class="breeder-tag">🏆 Allevatore</span></span></div>
+      <div class="section-head"><span>🧑‍🌾 Allevatore</span></div>
 
       <!-- SUB-NAV -->
       <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px;padding-bottom:2px;">
         <button class="btn btn-primary btn-sm" onclick="showBreederTab('docs')" id="btab-docs">📄 CITES</button>
         <button class="btn btn-outline btn-sm" onclick="showBreederTab('sched')" id="btab-sched">⏰ Scad.</button>
         <button class="btn btn-outline btn-sm" onclick="showBreederTab('tree')" id="btab-tree">🌳 Pedigree</button>
-        <button class="btn btn-outline btn-sm" onclick="showBreederTab('morph')" id="btab-morph">🧬 Morph</button>
         <button class="btn btn-outline btn-sm" onclick="showBreederTab('mating')" id="btab-mating">❤️ Accopp.</button>
         <button class="btn btn-outline btn-sm" onclick="showBreederTab('feeder')" id="btab-feeder">🐀 Magaz.</button>
         <button class="btn btn-outline btn-sm" onclick="showBreederTab('finance')" id="btab-finance">💰 Costi</button>
@@ -576,7 +575,7 @@ input[type="number"].form-input{-moz-appearance:textfield;}
       <div id="bsec-docs">
         <div class="card">
           <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
-            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Archivio documenti</span>
+            <span>Archivio documenti</span>
             <button class="btn btn-outline btn-sm" onclick="openAddDoc()">+ Aggiungi</button>
           </div>
           <div id="doc-add-form" style="display:none;margin-bottom:12px;">
@@ -609,7 +608,7 @@ input[type="number"].form-input{-moz-appearance:textfield;}
       <div id="bsec-sched" style="display:none">
         <div class="card">
           <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
-            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Scadenziario trattamenti</span>
+            <span>Scadenziario trattamenti</span>
             <button class="btn btn-outline btn-sm" onclick="openAddSched()">+ Aggiungi</button>
           </div>
           <div id="sched-add-form" style="display:none;margin-bottom:12px;">
@@ -654,33 +653,11 @@ input[type="number"].form-input{-moz-appearance:textfield;}
         </div>
       </div>
 
-      <!-- MORPH CALCULATOR -->
-      <div id="bsec-morph" style="display:none">
-        <div class="card">
-          <div class="card-label">Calcolatore di Morph</div>
-          <div class="form-group"><label class="form-label">Specie / Preset</label>
-            <select class="form-select" id="morph-species" onchange="loadMorphPresets()">
-              <option value="bp">Ball Python</option>
-              <option value="cg">Corn Snake</option>
-              <option value="leo">Leopard Gecko</option>
-            </select>
-          </div>
-          <div class="form-group"><label class="form-label">Genotipo Padre</label>
-            <div id="morph-father-genes" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-          </div>
-          <div class="form-group"><label class="form-label">Genotipo Madre</label>
-            <div id="morph-mother-genes" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-          </div>
-          <button class="btn btn-primary" onclick="calcMorph()">Calcola probabilità</button>
-          <div id="morph-results" style="margin-top:12px;"></div>
-        </div>
-      </div>
-
       <!-- MATING LOG -->
       <div id="bsec-mating" style="display:none">
         <div class="card">
           <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
-            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Registro accoppiamenti</span>
+            <span>Registro accoppiamenti</span>
             <button class="btn btn-outline btn-sm" onclick="openAddMating()">+ Aggiungi</button>
           </div>
           <div id="mating-add-form" style="display:none;margin-bottom:12px;">
@@ -710,7 +687,7 @@ input[type="number"].form-input{-moz-appearance:textfield;}
       <div id="bsec-feeder" style="display:none">
         <div class="card">
           <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
-            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Magazzino prede</span>
+            <span>Magazzino prede</span>
             <button class="btn btn-outline btn-sm" onclick="openAddFeeder()">+ Tipo</button>
           </div>
           <div id="feeder-add-form" style="display:none;margin-bottom:12px;">
@@ -734,7 +711,7 @@ input[type="number"].form-input{-moz-appearance:textfield;}
         </div>
         <div class="card">
           <div class="card-label" style="justify-content:space-between;margin-bottom:12px;">
-            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:1px;background:var(--gold);opacity:0.6;display:inline-block;"></span>Movimenti</span>
+            <span>Movimenti</span>
             <button class="btn btn-outline btn-sm" onclick="openAddFinance()">+ Aggiungi</button>
           </div>
           <div id="finance-add-form" style="display:none;margin-bottom:12px;">
@@ -772,7 +749,7 @@ input[type="number"].form-input{-moz-appearance:textfield;}
     <button class="nav-btn" data-page="feed" onclick="switchPage('feed',this)"><span class="ico">🐭</span>Pasti</button>
     <button class="nav-btn" data-page="maint" onclick="switchPage('maint',this)"><span class="ico">🧹</span>Igiene</button>
     <button class="nav-btn" data-page="health" onclick="switchPage('health',this)"><span class="ico">💚</span>Salute</button>
-    <button class="nav-btn breeder-only" data-page="breeder" onclick="switchPage('breeder',this)" style="display:none"><span class="ico">🏆</span>Pro</button>
+    <button class="nav-btn breeder-only" data-page="breeder" onclick="switchPage('breeder',this)" style="display:none"><span class="ico">🧑‍🌾</span>Allev.</button>
     <button class="nav-btn" data-page="settings" onclick="switchPage('settings',this)"><span class="ico">⚙️</span>Config</button>
   </div>
 </div>
@@ -840,6 +817,10 @@ input[type="number"].form-input{-moz-appearance:textfield;}
     <div class="toggle-row">
       <div class="toggle-info"><div class="toggle-name">Pulizia profonda</div><div class="toggle-desc">Avviso per il cambio substrato</div></div>
       <div class="toggle on" id="toggle-deep" onclick="toggleNotif('deep')"></div>
+    </div>
+    <div class="toggle-row" id="toggle-row-sched" style="display:none">
+      <div class="toggle-info"><div class="toggle-name">🧑‍🌾 Trattamenti (Allevatore)</div><div class="toggle-desc">Avviso per scadenze di sverminazione, visite, integratori</div></div>
+      <div class="toggle on" id="toggle-sched" onclick="toggleNotif('sched')"></div>
     </div>
     <div style="height:20px"></div>
     <button class="btn btn-primary" onclick="requestNotifPermission()">Abilita notifiche push</button>
@@ -1105,6 +1086,17 @@ function renderHome() {
   if (remainDeep <= 0) alerts.push({type:'danger', msg:'Pulizia profonda necessaria!'});
   else if (remainDeep <= 5) alerts.push({type:'warn', msg:`Pulizia profonda tra ${remainDeep} giorni`});
   else alerts.push({type:'ok', msg:`Pulizia profonda tra ${remainDeep} giorni`});
+
+  // Scadenziario alerts in breeder mode
+  if (currentMode === 'breeder' && rep.schedules && rep.schedules.length) {
+    rep.schedules.filter(s => !s.done).forEach(s => {
+      const daysLeft = Math.floor((new Date(s.date) - new Date()) / 86400000);
+      const label = s.desc || s.type;
+      if (daysLeft < 0) alerts.push({type:'danger', msg:`${SCHED_ICONS[s.type]||'📌'} Scaduto: ${label}`});
+      else if (daysLeft === 0) alerts.push({type:'warn', msg:`${SCHED_ICONS[s.type]||'📌'} Oggi: ${label}`});
+      else if (daysLeft <= 3) alerts.push({type:'warn', msg:`${SCHED_ICONS[s.type]||'📌'} ${label} tra ${daysLeft}gg`});
+    });
+  }
 
   document.getElementById('alerts-container').innerHTML = alerts.map(a =>
     `<div class="alert-chip ${a.type}"><div class="dot"></div>${a.msg}</div>`
@@ -1525,7 +1517,7 @@ function setMode(mode) {
 // ═══════════════════════════════════════════════════════
 // BREEDER PAGE SUB-TABS
 // ═══════════════════════════════════════════════════════
-const breederSections = ['docs','sched','tree','morph','mating','feeder','finance'];
+const breederSections = ['docs','sched','tree','mating','feeder','finance'];
 function showBreederTab(tab) {
   breederSections.forEach(s => {
     document.getElementById('bsec-'+s).style.display = s===tab ? '' : 'none';
@@ -1539,7 +1531,6 @@ function showBreederTab(tab) {
   if (tab==='finance') renderFinance();
   if (tab==='sched') renderSched();
   if (tab==='mating') { renderMating(); populateMatingSelects(); }
-  if (tab==='morph') initMorphCalc();
 }
 
 function renderBreeder() { showBreederTab('docs'); renderDocs(); }
@@ -1866,116 +1857,6 @@ function saveParents() {
 }
 
 // ═══════════════════════════════════════════════════════
-// MORPH CALCULATOR
-// ═══════════════════════════════════════════════════════
-const MORPH_GENES = {
-  bp: [
-    {name:'Normal',type:'wild'},
-    {name:'Pastel',type:'dominant'},
-    {name:'Spider',type:'dominant'},
-    {name:'Lesser',type:'dominant'},
-    {name:'Butter',type:'dominant'},
-    {name:'Pinstripe',type:'dominant'},
-    {name:'Clown',type:'recessive'},
-    {name:'Pied',type:'recessive'},
-    {name:'Albino',type:'recessive'},
-    {name:'Axanthic',type:'recessive'},
-    {name:'Cinnamon',type:'dominant'},
-    {name:'GHI',type:'dominant'},
-  ],
-  cg: [
-    {name:'Normal',type:'wild'},{name:'Amel',type:'recessive'},{name:'Anery',type:'recessive'},{name:'Caramel',type:'recessive'},{name:'Charcoal',type:'recessive'},{name:'Dilute',type:'recessive'},
-  ],
-  leo: [
-    {name:'Normal',type:'wild'},{name:'Albino',type:'recessive'},{name:'Blizzard',type:'recessive'},{name:'Eclipse',type:'recessive'},{name:'Tangerine',type:'dominant'},{name:'Mack Snow',type:'codominant'},
-  ]
-};
-
-let selectedFatherGenes = new Set();
-let selectedMotherGenes = new Set();
-
-function initMorphCalc() {
-  loadMorphPresets();
-}
-
-function loadMorphPresets() {
-  const species = document.getElementById('morph-species').value;
-  const genes = MORPH_GENES[species] || [];
-  selectedFatherGenes = new Set();
-  selectedMotherGenes = new Set();
-  document.getElementById('morph-results').innerHTML = '';
-
-  function renderGenes(containerId, selectedSet) {
-    document.getElementById(containerId).innerHTML = genes.filter(g=>g.type!=='wild').map(g => {
-      const sel = selectedSet.has(g.name);
-      return `<button onclick="toggleMorphGene('${containerId}','${g.name}')" style="padding:6px 12px;border-radius:20px;border:1px solid ${sel?'var(--gold)':'var(--border2)'};background:${sel?'rgba(201,168,76,0.15)':'var(--card2)'};color:${sel?'var(--gold2)':'var(--muted)'};font-size:12px;cursor:pointer;margin-bottom:4px;transition:all 0.15s;" id="gene-${containerId}-${g.name.replace(/\s/g,'_')}">${g.name}<br><span style="font-size:9px;opacity:0.7">${g.type}</span></button>`;
-    }).join('');
-  }
-  renderGenes('morph-father-genes', selectedFatherGenes);
-  renderGenes('morph-mother-genes', selectedMotherGenes);
-}
-
-function toggleMorphGene(containerId, geneName) {
-  const set = containerId==='morph-father-genes' ? selectedFatherGenes : selectedMotherGenes;
-  set.has(geneName) ? set.delete(geneName) : set.add(geneName);
-  loadMorphPresets();
-  // restore selections
-  [...selectedFatherGenes].forEach(g => {
-    const el = document.getElementById(`gene-morph-father-genes-${g.replace(/\s/g,'_')}`);
-    if (el) { el.style.borderColor='var(--gold)'; el.style.background='rgba(201,168,76,0.15)'; el.style.color='var(--gold2)'; }
-  });
-  [...selectedMotherGenes].forEach(g => {
-    const el = document.getElementById(`gene-morph-mother-genes-${g.replace(/\s/g,'_')}`);
-    if (el) { el.style.borderColor='var(--gold)'; el.style.background='rgba(201,168,76,0.15)'; el.style.color='var(--gold2)'; }
-  });
-}
-
-function calcMorph() {
-  const species = document.getElementById('morph-species').value;
-  const genes = MORPH_GENES[species] || [];
-  const results = [];
-
-  // Simple probability model for recessive genes
-  const recessiveF = genes.filter(g=>g.type==='recessive'&&selectedFatherGenes.has(g.name)).map(g=>g.name);
-  const recessiveM = genes.filter(g=>g.type==='recessive'&&selectedMotherGenes.has(g.name)).map(g=>g.name);
-  const allRec = [...new Set([...recessiveF,...recessiveM])];
-
-  allRec.forEach(gene => {
-    const inF = recessiveF.includes(gene);
-    const inM = recessiveM.includes(gene);
-    let visPct = 0, hetPct = 0;
-    if (inF && inM) { visPct=25; hetPct=50; }
-    else if (inF || inM) { hetPct=50; }
-    if (visPct>0) results.push({name:`${gene}`, pct:`${visPct}%`, color:'var(--gold2)'});
-    if (hetPct>0) results.push({name:`Het ${gene}`, pct:`${hetPct}%`, color:'var(--muted)'});
-  });
-
-  // Dominant genes
-  const domF = genes.filter(g=>g.type==='dominant'&&selectedFatherGenes.has(g.name)).map(g=>g.name);
-  const domM = genes.filter(g=>g.type==='dominant'&&selectedMotherGenes.has(g.name)).map(g=>g.name);
-  [...new Set([...domF,...domM])].forEach(gene => {
-    const inF=domF.includes(gene), inM=domM.includes(gene);
-    const pct = (inF&&inM)?75:50;
-    results.push({name:gene, pct:`${pct}%`, color:'var(--gold2)'});
-  });
-
-  if (!results.length) {
-    document.getElementById('morph-results').innerHTML='<p style="font-size:13px;color:var(--muted);text-align:center;margin-top:12px;">Seleziona almeno un morph per vedere i risultati.</p>';
-    return;
-  }
-
-  document.getElementById('morph-results').innerHTML = `
-    <div class="card-label" style="margin-top:12px;">Probabilità nati</div>
-    <div class="morph-result">${results.map(r=>`
-      <div class="morph-chip">
-        <div class="morph-pct" style="color:${r.color}">${r.pct}</div>
-        <div class="morph-name">${r.name}</div>
-      </div>`).join('')}
-    </div>
-    <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;">⚠️ Calcolo semplificato. Per geni co-dominanti o combinazioni complesse consulta uno strumento dedicato.</p>`;
-}
-
-// ═══════════════════════════════════════════════════════
 // MATING LOG
 // ═══════════════════════════════════════════════════════
 function openAddMating() {
@@ -2214,11 +2095,15 @@ function toggleNotif(k) {
 }
 function updateNotifToggles() {
   const rep = activeRep();
-  ['feed','deep'].forEach(k => {
+  ['feed','deep','sched'].forEach(k => {
     const el = document.getElementById('toggle-'+k);
     if (!el) return;
+    if (!rep.notifToggles[k]) rep.notifToggles[k] = false; // ensure key exists
     rep.notifToggles[k] ? el.classList.add('on') : el.classList.remove('on');
   });
+  // show sched toggle only in breeder mode
+  const schedRow = document.getElementById('toggle-row-sched');
+  if (schedRow) schedRow.style.display = currentMode==='breeder' ? '' : 'none';
 }
 
 function scheduleNotifications() { if (Notification.permission==='granted') checkAndNotify(); }
@@ -2237,6 +2122,21 @@ function checkAndNotify() {
     if (rep.notifToggles.deep) {
       const ld = rep.puliziaProfonda.length ? rep.puliziaProfonda[rep.puliziaProfonda.length-1].date : null;
       if (daysSince(ld) >= rep.intervals.deep) sendNotif(`${rep.emoji} ${rep.name} — Pulizia profonda`, 'Tempo di cambiare il substrato!');
+    }
+    // Scadenziario trattamenti (breeder)
+    if (rep.notifToggles.sched && rep.schedules && rep.schedules.length) {
+      const today = todayISO();
+      rep.schedules.forEach(s => {
+        if (s.done) return;
+        const daysLeft = Math.floor((new Date(s.date) - new Date()) / 86400000);
+        if (daysLeft <= 0) {
+          const label = s.desc || s.type;
+          sendNotif(`${rep.emoji} ${rep.name} — Trattamento scaduto`, `${SCHED_ICONS[s.type]||'📌'} ${label} era previsto per ${formatDate(s.date)}`);
+        } else if (daysLeft <= 2) {
+          const label = s.desc || s.type;
+          sendNotif(`${rep.emoji} ${rep.name} — Trattamento imminente`, `${SCHED_ICONS[s.type]||'📌'} ${label} tra ${daysLeft} giorn${daysLeft===1?'o':'i'}`);
+        }
+      });
     }
   });
 }
